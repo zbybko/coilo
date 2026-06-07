@@ -1,8 +1,8 @@
-# vinext-starter
+# Coilo Headless Shopify Site
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Product landing page for Coilo's modern 3D printed spiral bookshelf. The site
+runs on vinext/React and creates Shopify carts through the Storefront API before
+redirecting buyers to Shopify checkout.
 
 ## Prerequisites
 
@@ -12,15 +12,26 @@ Drizzle support.
 
 ```bash
 npm install
+cp .env.example .env
 npm run dev
 npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+Set these local environment variables before testing Shopify checkout:
+
+- `SHOPIFY_STORE_DOMAIN`: your `*.myshopify.com` store domain
+- `SHOPIFY_STOREFRONT_ACCESS_TOKEN`: Storefront API public access token
+- `SHOPIFY_PRODUCT_HANDLE`: Shopify product handle for the spiral bookshelf
+- `SHOPIFY_API_VERSION`: Storefront API version, default `2026-04`
+
+The homepage still renders without Shopify credentials. `/api/buy` returns a
+configuration error until the environment variables are set.
 
 ## Included Shape
 
 - edit site code under `app/`
+- Shopify checkout route lives at `app/api/buy/route.ts`
+- Shopify Storefront API helpers live in `lib/shopify.ts`
 - `.openai/hosting.json` declares optional Sites D1 and R2 bindings
 - `vite.config.ts` simulates declared bindings for local development
 - `db/schema.ts` starts intentionally empty

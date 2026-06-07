@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Coilo | Modern Spiral Bookshelf",
   description:
-    "A sculptural 3D printed spiral bookshelf and magazine holder by Coilo, available in vivid color finishes on Etsy.",
+    "A sculptural 3D printed spiral bookshelf and magazine holder by Coilo, with headless Shopify checkout.",
   openGraph: {
     title: "Coilo | Modern Spiral Bookshelf",
     description:

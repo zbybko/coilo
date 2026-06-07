@@ -1,8 +1,6 @@
 import type { CSSProperties } from "react";
 
-const productUrl =
-  "https://www.etsy.com/de/listing/4481551698/modern-spiral-bookshelf-3d-printed";
-const shopUrl = "https://www.etsy.com/shop/Coilo";
+const SHOPIFY_STORE = "coilo.myshopify.com";
 
 const colors = [
   {
@@ -11,6 +9,7 @@ const colors = [
     image: "/media/cyan.png",
     accent: "#08a6ff",
     description: "A saturated blue built for desks, gaming shelves, and crisp studio spaces.",
+    variantId: "61987185787210",
   },
   {
     name: "Sakura",
@@ -18,6 +17,7 @@ const colors = [
     image: "/media/sakura.webp",
     accent: "#ff7da6",
     description: "A bright floral pink that turns favorite books into a soft display moment.",
+    variantId: "62010088554826",
   },
   {
     name: "Cherry",
@@ -25,6 +25,7 @@ const colors = [
     image: "/media/cherry.png",
     accent: "#b80f2d",
     description: "A richer red for bold shelves, editorial stacks, and warmer interiors.",
+    variantId: "62010088587594",
   },
   {
     name: "Sunflower",
@@ -32,17 +33,36 @@ const colors = [
     image: "/media/sunflower.png",
     accent: "#f2b600",
     description: "A sunny yellow that makes the spiral feel like a sculptural accent piece.",
+    variantId: "62010088620362",
+  },
+  {
+    name: "Rosé",
+    tone: "Soft pink",
+    image: "/media/pink-spiral.png",
+    accent: "#f4a0b5",
+    description: "A delicate rose tone that brings warmth and softness to any shelf or desk.",
+    variantId: "62010091077962",
   },
 ];
+
+function cartUrl(variantId: string) {
+  return `https://${SHOPIFY_STORE}/cart/${variantId}:1`;
+}
 
 const specs = [
   "3D printed PLA",
   "245 x 178 x 192 mm",
   "Ships from Germany",
-  "€39",
 ];
 
-export default function Home() {
+export default async function Home() {
+  const productTitle = "Modern Spiral Bookshelf";
+  const productSpecs = [
+    ...specs,
+    "€39",
+  ];
+  const defaultBuyUrl = cartUrl(colors[0].variantId);
+
   return (
     <main className="site-shell">
       <section className="hero" aria-labelledby="hero-title">
@@ -67,9 +87,7 @@ export default function Home() {
           <nav className="topbar__nav" aria-label="Primary navigation">
             <a href="#colors">Colors</a>
             <a href="#details">Details</a>
-            <a href={shopUrl} target="_blank" rel="noreferrer">
-              Etsy shop
-            </a>
+            <a href={defaultBuyUrl}>Shopify checkout</a>
           </nav>
         </header>
 
@@ -81,8 +99,8 @@ export default function Home() {
             story you want on the shelf.
           </p>
           <div className="hero__actions" aria-label="Purchase actions">
-            <a className="button button--primary" href={productUrl} target="_blank" rel="noreferrer">
-              Buy on Etsy
+            <a className="button button--primary" href={defaultBuyUrl}>
+              Buy with Shopify
             </a>
             <a className="button button--secondary" href="#colors">
               View colors
@@ -100,9 +118,9 @@ export default function Home() {
           </p>
         </div>
         <dl className="spec-strip" aria-label="Product specifications">
-          {specs.map((spec) => (
+          {productSpecs.map((spec) => (
             <div key={spec}>
-              <dt>{spec.includes("€") ? "Price" : "Spec"}</dt>
+              <dt>{spec.includes("€") || spec.includes("$") ? "Price" : "Spec"}</dt>
               <dd>{spec}</dd>
             </div>
           ))}
@@ -134,9 +152,7 @@ export default function Home() {
           {colors.map((color) => (
             <a
               className="color-panel"
-              href={productUrl}
-              target="_blank"
-              rel="noreferrer"
+              href={cartUrl(color.variantId)}
               key={color.name}
               style={{ "--accent": color.accent } as CSSProperties}
             >
@@ -167,14 +183,14 @@ export default function Home() {
         <div className="details-section__copy">
           <h2 id="details-title">Printed for daily display.</h2>
           <p>
-            Made from PLA with a smooth looped profile, Coilo keeps favorite
+            Made from PLA with a smooth looped profile, {productTitle} keeps favorite
             books, magazines, notebooks, and art catalogs visible instead of
             stacked away.
           </p>
           <ul>
             <li>Compact footprint for desks, shelves, and sideboards.</li>
             <li>Lightweight 3D printed construction with a bold sculptural shape.</li>
-            <li>Available through Etsy with a 30-day return window.</li>
+            <li>Headless Shopify checkout keeps payment and order handling native.</li>
           </ul>
         </div>
       </section>
@@ -187,15 +203,15 @@ export default function Home() {
         />
         <h2 id="final-title">Bring the spiral to your shelf.</h2>
         <p>
-          Order the Modern Spiral Bookshelf directly from Coilo on Etsy, or
-          visit the shop to see the full color set.
+          Order {productTitle} through Shopify checkout and choose the finish
+          that fits your shelf.
         </p>
         <div className="hero__actions">
-          <a className="button button--primary" href={productUrl} target="_blank" rel="noreferrer">
-            Buy on Etsy
+          <a className="button button--primary" href={defaultBuyUrl}>
+            Buy with Shopify
           </a>
-          <a className="button button--secondary button--dark" href={shopUrl} target="_blank" rel="noreferrer">
-            Visit shop
+          <a className="button button--secondary button--dark" href="#colors">
+            Pick a color
           </a>
         </div>
       </section>
