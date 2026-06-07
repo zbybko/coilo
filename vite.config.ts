@@ -11,6 +11,10 @@ const { d1, r2 } = hostingConfig;
 const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
+  routes: [
+    { pattern: "coilo.de", custom_domain: true },
+    { pattern: "www.coilo.de", custom_domain: true },
+  ],
   d1_databases: d1
     ? [
         {
