@@ -79,8 +79,8 @@ function NavBar() {
         <span>Coilo</span>
       </a>
       <div className={`c-nav__links ${menuOpen ? "open" : ""}`}>
-        <a href="#colors" onClick={() => setMenu(false)}>Colors</a>
-        <a href="#details" onClick={() => setMenu(false)}>Details</a>
+        <a href="/colors" onClick={() => setMenu(false)}>Colors</a>
+        <a href="/about" onClick={() => setMenu(false)}>How It's Made</a>
         <a href="#configurator" onClick={() => setMenu(false)}>Configure</a>
         <a href={ETSY_URL} target="_blank" rel="noopener" className="c-nav__cta"
            onClick={() => setMenu(false)}>
@@ -321,8 +321,8 @@ function FooterCTA() {
       <footer className="c-footer__bar">
         <span>© 2026 Coilo</span>
         <div className="c-footer__links">
-          <a href="#colors">Colors</a>
-          <a href="#details">Details</a>
+          <a href="/colors">Colors</a>
+          <a href="/about">How It's Made</a>
           <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
         </div>
       </footer>

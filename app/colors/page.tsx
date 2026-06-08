@@ -1,0 +1,252 @@
+"use client";
+
+import { useEffect, useRef, useState, CSSProperties } from "react";
+
+const SHOPIFY_STORE = "coilo.myshopify.com";
+const ETSY_URL = "https://www.etsy.com/shop/Coilo";
+
+const PRODUCTS = [
+  { slug: "cyan", num: "01 / 05", tone: "Electric blue", name: "Cyan",
+    image: "/media/cyan.png", accent: "#08a6ff",
+    desc: "A saturated blue built for desks, gaming shelves, and crisp studio spaces. Cyan catches the eye without clashing with neutral interiors.",
+    variantId: "61987185787210" },
+  { slug: "sakura", num: "02 / 05", tone: "Soft pink", name: "Sakura",
+    image: "/media/sakura.webp", accent: "#ff7da6",
+    desc: "A bright floral pink that turns favorite books into a soft display moment. Perfect for bedroom shelves and warm reading nooks.",
+    variantId: "62010088554826" },
+  { slug: "cherry", num: "03 / 05", tone: "Deep red", name: "Cherry",
+    image: "/media/cherry.png", accent: "#b80f2d",
+    desc: "A richer red for bold shelves, editorial stacks, and warmer interiors. Cherry makes the spiral feel like a statement object.",
+    variantId: "62010088587594" },
+  { slug: "sunflower", num: "04 / 05", tone: "Warm yellow", name: "Sunflower",
+    image: "/media/sunflower.png", accent: "#f2b600",
+    desc: "A sunny yellow that makes the spiral feel like a sculptural accent piece. Sunflower brightens any shelf and pairs well with wood tones.",
+    variantId: "62010088620362" },
+  { slug: "rose", num: "05 / 05", tone: "Soft pink", name: "Rosé",
+    image: "/media/pink-spiral.png", accent: "#f4a0b5",
+    desc: "A delicate rose tone that brings warmth and softness to any shelf or desk. Rosé is the quiet one — and often the first to sell out.",
+    variantId: "62010091077962" },
+];
+
+const specs = [
+  { label: "Material", val: "PLA" },
+  { label: "Weight", val: "~280 g" },
+  { label: "Dimensions", val: "245×178×192 mm" },
+  { label: "Finish", val: "Smooth matte" },
+];
+
+function cartUrl(variantId: string) {
+  return `https://${SHOPIFY_STORE}/cart/${variantId}:1`;
+}
+
+export default function ColorsPage() {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const panelRefs = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    // Hash navigation
+    if (window.location.hash) {
+      const slug = window.location.hash.slice(1);
+      const idx = PRODUCTS.findIndex(p => p.slug === slug);
+      if (idx >= 0) {
+        setTimeout(() => {
+          panelRefs.current[idx]?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    }
+
+    // Track active panel via IntersectionObserver
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const slug = (e.target as HTMLElement).dataset.color;
+          const idx = PRODUCTS.findIndex(p => p.slug === slug);
+          if (idx >= 0) setActiveIdx(idx);
+        }
+      });
+    }, { threshold: 0.5 });
+    panelRefs.current.forEach(p => p && obs.observe(p));
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <>
+      <style>{`
+        html { scroll-snap-type: y mandatory; }
+        .colors-page { background: #0a0a0a; }
+
+        .col-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 0 clamp(20px,5vw,72px); height: 72px;
+          background: rgba(10,10,10,.85); backdrop-filter: blur(16px);
+          box-shadow: 0 1px 0 rgba(255,255,255,.06); }
+        .col-nav__brand { display: flex; align-items: center; gap: 10px;
+          font-size: 18px; font-weight: 700; color: #f8f5ee; text-decoration: none; }
+        .col-nav__brand img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .col-nav__links { display: flex; align-items: center; gap: clamp(18px,3vw,36px);
+          font-size: 13px; font-weight: 600; color: rgba(248,245,238,0.55); }
+        .col-nav__links a { color: inherit; text-decoration: none; transition: color .2s; }
+        .col-nav__links a:hover, .col-nav__links a.active { color: #fff; }
+        .col-nav__cta { display: inline-flex; align-items: center; gap: 6px;
+          padding: 8px 18px; border: 1.5px solid rgba(255,255,255,.25); border-radius: 999px;
+          color: #fff !important; font-weight: 700; transition: border-color .2s; }
+        .col-nav__cta:hover { border-color: rgba(255,255,255,.6); }
+
+        .side-nav { position: fixed; right: clamp(20px,5vw,72px); top: 50%;
+          transform: translateY(-50%); z-index: 90;
+          display: flex; flex-direction: column; gap: 14px; }
+        .side-dot { width: 12px; height: 12px; border-radius: 50%;
+          border: 2px solid rgba(255,255,255,.3); background: transparent;
+          cursor: pointer; transition: all .3s; padding: 0; }
+        .side-dot.active { transform: scale(1.25); }
+        .side-dot:hover { border-color: rgba(255,255,255,.6); }
+
+        .panel { min-height: 100svh; scroll-snap-align: start;
+          display: grid; grid-template-columns: 1fr 1fr;
+          position: relative; overflow: hidden; }
+        .panel[data-color="cyan"] { background: linear-gradient(135deg,#061a2e,#0a0a0a); }
+        .panel[data-color="sakura"] { background: linear-gradient(135deg,#1e0a14,#0a0a0a); }
+        .panel[data-color="cherry"] { background: linear-gradient(135deg,#1a0608,#0a0a0a); }
+        .panel[data-color="sunflower"] { background: linear-gradient(135deg,#1a1505,#0a0a0a); }
+        .panel[data-color="rose"] { background: linear-gradient(135deg,#1a0e12,#0a0a0a); }
+
+        .panel__media { position: relative; display: flex; align-items: center;
+          justify-content: center; overflow: hidden; }
+        .panel__glow { position: absolute; width: 400px; height: 400px; border-radius: 50%;
+          opacity: .08; filter: blur(120px); pointer-events: none; top: 30%; left: 40%; }
+        .panel__img { max-width: 75%; max-height: 80vh; object-fit: contain;
+          filter: drop-shadow(0 40px 80px rgba(0,0,0,.35));
+          transition: transform .6s ease; display: block; }
+        .panel:hover .panel__img { transform: scale(1.03) rotate(-1deg); }
+
+        .panel__content { display: flex; flex-direction: column; justify-content: center;
+          padding: clamp(48px,7vw,96px); color: #f8f5ee; }
+        .panel__num { font-size: 13px; font-weight: 700; text-transform: uppercase;
+          letter-spacing: .15em; color: rgba(248,245,238,0.55); margin-bottom: 18px; }
+        .panel__tone { font-size: 12px; font-weight: 800; text-transform: uppercase;
+          letter-spacing: .12em; margin-bottom: 8px; }
+        .panel__name { font-family: var(--font-instrument, Georgia, serif);
+          font-size: clamp(52px,8vw,120px); font-weight: 400; line-height: .88; margin-bottom: 20px; }
+        .panel__desc { max-width: 440px; color: rgba(248,245,238,0.55);
+          font-size: clamp(15px,1.5vw,18px); line-height: 1.7; margin-bottom: 36px; }
+        .panel__specs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 36px; }
+        .spec { padding: 16px 20px; background: rgba(255,255,255,.06); border-radius: 8px; }
+        .spec__label { font-size: 10px; font-weight: 700; text-transform: uppercase;
+          letter-spacing: .08em; color: rgba(248,245,238,0.55); margin-bottom: 2px; }
+        .spec__val { font-size: 16px; font-weight: 700; }
+        .panel__buy { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .panel__price { font-size: 32px; font-weight: 700; }
+        .btn-buy { display: inline-flex; align-items: center; gap: 8px; padding: 0 28px; height: 52px;
+          border-radius: 999px; font-size: 14px; font-weight: 700; letter-spacing: .02em;
+          transition: transform .2s, filter .2s; white-space: nowrap; text-decoration: none; color: #fff; }
+        .btn-buy:hover { transform: translateY(-2px); filter: brightness(1.12); }
+        .panel[data-color="sunflower"] .btn-buy { color: #111; }
+
+        .col-foot { padding: 22px clamp(20px,5vw,72px); border-top: 1px solid rgba(255,255,255,.08);
+          display: flex; align-items: center; justify-content: space-between;
+          font-size: 13px; color: rgba(248,245,238,0.55); scroll-snap-align: end;
+          background: #0a0a0a; }
+        .col-foot a { color: inherit; text-decoration: none; transition: color .2s; }
+        .col-foot a:hover { color: #fff; }
+        .col-foot__links { display: flex; gap: 24px; }
+
+        @media (max-width: 900px) {
+          .panel { grid-template-columns: 1fr; }
+          .panel__media { min-height: 50svh; }
+          .panel__img { max-width: 60%; max-height: 50vh; }
+          .panel__content { padding: 36px 20px 56px; }
+          .panel__specs { grid-template-columns: 1fr; }
+          .side-nav { display: none; }
+        }
+        @media (max-width: 720px) {
+          .col-nav__links { display: none; }
+          .panel__name { font-size: clamp(40px,14vw,72px); }
+          .panel__media { min-height: 40svh; }
+          .col-foot { flex-direction: column; gap: 12px; text-align: center; }
+        }
+      `}</style>
+
+      <div className="colors-page">
+        {/* Nav */}
+        <nav className="col-nav">
+          <a href="/" className="col-nav__brand">
+            <img src="/media/coilo-logo.png" alt="Coilo" />
+            <span>Coilo</span>
+          </a>
+          <div className="col-nav__links">
+            <a href="/">Home</a>
+            <a href="/about">How It&apos;s Made</a>
+            <a href="/colors" className="active">Colors</a>
+            <a href={ETSY_URL} target="_blank" rel="noopener" className="col-nav__cta">
+              Shop on Etsy
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+          </div>
+        </nav>
+
+        {/* Side dots */}
+        <div className="side-nav">
+          {PRODUCTS.map((p, i) => (
+            <button key={p.slug}
+                    className={`side-dot ${i === activeIdx ? "active" : ""}`}
+                    style={{ background: i === activeIdx ? p.accent : "transparent", borderColor: i === activeIdx ? p.accent : undefined }}
+                    onClick={() => panelRefs.current[i]?.scrollIntoView({ behavior: "smooth" })}
+                    aria-label={p.name} />
+          ))}
+        </div>
+
+        {/* Panels */}
+        <main>
+          {PRODUCTS.map((p, i) => (
+            <section
+              key={p.slug}
+              className="panel"
+              data-color={p.slug}
+              id={p.slug}
+              ref={el => { panelRefs.current[i] = el; }}
+              style={{ paddingTop: i === 0 ? "72px" : undefined, "--accent": p.accent } as CSSProperties}
+            >
+              <div className="panel__media">
+                <div className="panel__glow" style={{ background: p.accent }} />
+                <img src={p.image} alt={`${p.name} Coilo`} className="panel__img" loading={i > 0 ? "lazy" : undefined} />
+              </div>
+              <div className="panel__content">
+                <p className="panel__num">{p.num}</p>
+                <p className="panel__tone" style={{ color: p.accent }}>{p.tone}</p>
+                <h2 className="panel__name">{p.name}</h2>
+                <p className="panel__desc">{p.desc}</p>
+                <div className="panel__specs">
+                  {specs.map(s => (
+                    <div key={s.label} className="spec">
+                      <p className="spec__label">{s.label}</p>
+                      <p className="spec__val">{s.val}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="panel__buy">
+                  <span className="panel__price">€39</span>
+                  <a href={cartUrl(p.variantId)} className="btn-buy"
+                     style={{ background: p.accent }}>
+                    Buy Now
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                  </a>
+                </div>
+              </div>
+            </section>
+          ))}
+        </main>
+
+        {/* Footer */}
+        <footer className="col-foot">
+          <span>© 2026 Coilo</span>
+          <div className="col-foot__links">
+            <a href="/">Home</a>
+            <a href="/about">How It&apos;s Made</a>
+            <a href="/colors">Colors</a>
+            <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
+          </div>
+        </footer>
+      </div>
+    </>
+  );
+}
