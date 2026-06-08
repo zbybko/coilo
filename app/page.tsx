@@ -1,220 +1,347 @@
-import type { CSSProperties } from "react";
+"use client";
 
+import { useState, useEffect, useRef, CSSProperties } from "react";
+
+// ── Data ─────────────────────────────────────────────
 const SHOPIFY_STORE = "coilo.myshopify.com";
+const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 
-const colors = [
-  {
-    name: "Cyan",
-    tone: "Electric blue",
-    image: "/media/cyan.png",
-    accent: "#08a6ff",
+const PRODUCTS = [
+  { name: "Cyan", tone: "Electric blue", image: "/media/cyan.png", accent: "#08a6ff",
     description: "A saturated blue built for desks, gaming shelves, and crisp studio spaces.",
-    variantId: "61987185787210",
-  },
-  {
-    name: "Sakura",
-    tone: "Soft pink",
-    image: "/media/sakura.webp",
-    accent: "#ff7da6",
+    variantId: "61987185787210" },
+  { name: "Sakura", tone: "Soft pink", image: "/media/sakura.webp", accent: "#ff7da6",
     description: "A bright floral pink that turns favorite books into a soft display moment.",
-    variantId: "62010088554826",
-  },
-  {
-    name: "Cherry",
-    tone: "Deep red",
-    image: "/media/cherry.png",
-    accent: "#b80f2d",
+    variantId: "62010088554826" },
+  { name: "Cherry", tone: "Deep red", image: "/media/cherry.png", accent: "#b80f2d",
     description: "A richer red for bold shelves, editorial stacks, and warmer interiors.",
-    variantId: "62010088587594",
-  },
-  {
-    name: "Sunflower",
-    tone: "Warm yellow",
-    image: "/media/sunflower.png",
-    accent: "#f2b600",
+    variantId: "62010088587594" },
+  { name: "Sunflower", tone: "Warm yellow", image: "/media/sunflower.png", accent: "#f2b600",
     description: "A sunny yellow that makes the spiral feel like a sculptural accent piece.",
-    variantId: "62010088620362",
-  },
-  {
-    name: "Rosé",
-    tone: "Soft pink",
-    image: "/media/pink-spiral.png",
-    accent: "#f4a0b5",
+    variantId: "62010088620362" },
+  { name: "Rosé", tone: "Soft pink", image: "/media/pink-spiral.png", accent: "#f4a0b5",
     description: "A delicate rose tone that brings warmth and softness to any shelf or desk.",
-    variantId: "62010091077962",
-  },
+    variantId: "62010091077962" },
 ];
 
 function cartUrl(variantId: string) {
   return `https://${SHOPIFY_STORE}/cart/${variantId}:1`;
 }
 
-const specs = [
-  "3D printed PLA",
-  "245 x 178 x 192 mm",
-  "Ships from Germany",
-];
+// ── Hooks ─────────────────────────────────────────────
+function useScrollReveal(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) { el.classList.add("revealed"); return; }
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.classList.add("revealed"); obs.unobserve(el); }
+    }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return ref;
+}
 
-export default async function Home() {
-  const productTitle = "Modern Spiral Bookshelf";
-  const productSpecs = [
-    ...specs,
-    "€39",
-  ];
-  const defaultBuyUrl = cartUrl(colors[0].variantId);
+function useScrolled(offset = 60) {
+  const [s, set] = useState(false);
+  useEffect(() => {
+    const fn = () => set(window.scrollY > offset);
+    window.addEventListener("scroll", fn, { passive: true });
+    fn();
+    return () => window.removeEventListener("scroll", fn);
+  }, [offset]);
+  return s;
+}
 
+// ── RevealWrap ────────────────────────────────────────
+function RevealWrap({ children, className = "", delay = 0, style = {} }:
+  { children: React.ReactNode; className?: string; delay?: number; style?: CSSProperties }) {
+  const ref = useScrollReveal();
   return (
-    <main className="site-shell">
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="hero__media" aria-hidden="true">
-          <img
-            src="/media/cyan.png"
-            alt=""
-            className="hero__image"
-          />
-          <div className="hero__shade" />
+    <div ref={ref} className={`reveal-item ${className}`}
+         style={{ transitionDelay: `${delay}ms`, ...style }}>
+      {children}
+    </div>
+  );
+}
+
+// ── NavBar ────────────────────────────────────────────
+function NavBar() {
+  const scrolled = useScrolled();
+  const [menuOpen, setMenu] = useState(false);
+  return (
+    <nav className={`c-nav ${scrolled ? "c-nav--solid" : ""}`}>
+      <a href="#top" className="c-nav__brand">
+        <img src="/media/coilo-logo.png" alt="Coilo" className="c-nav__logo-img" />
+        <span>Coilo</span>
+      </a>
+      <div className={`c-nav__links ${menuOpen ? "open" : ""}`}>
+        <a href="#colors" onClick={() => setMenu(false)}>Colors</a>
+        <a href="#details" onClick={() => setMenu(false)}>Details</a>
+        <a href="#configurator" onClick={() => setMenu(false)}>Configure</a>
+        <a href={ETSY_URL} target="_blank" rel="noopener" className="c-nav__cta"
+           onClick={() => setMenu(false)}>
+          Shop on Etsy
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+      </div>
+      <button className={`c-nav__burger ${menuOpen ? "open" : ""}`}
+              onClick={() => setMenu(!menuOpen)} aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  );
+}
+
+// ── HeroSection ───────────────────────────────────────
+function HeroSection() {
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setActive(i => (i + 1) % PRODUCTS.length), 5000);
+    return () => clearInterval(id);
+  }, []);
+  const current = PRODUCTS[active];
+  return (
+    <section className="c-hero" id="top">
+      <div className="c-hero__media">
+        {PRODUCTS.map((p, i) => (
+          <img key={p.name} src={p.image} alt=""
+               className={`c-hero__bg ${i === active ? "active" : ""}`} />
+        ))}
+        <div className="c-hero__overlay"
+             style={{ "--overlay-color": current.accent } as CSSProperties} />
+      </div>
+      <div className="c-hero__color-indicator">
+        {PRODUCTS.map((p, i) => (
+          <button key={p.name}
+                  className={`c-hero__dot ${i === active ? "active" : ""}`}
+                  style={{ "--dot-color": p.accent } as CSSProperties}
+                  onClick={() => setActive(i)} aria-label={p.name} />
+        ))}
+      </div>
+      <div className="c-hero__content">
+        <p className="c-hero__eyebrow">3D Printed Design Object</p>
+        <h1 className="c-hero__title">
+          <span className="c-hero__brand-text">Coilo</span>
+          The Spiral Bookshelf
+        </h1>
+        <p className="c-hero__desc">
+          A sculptural holder for books, magazines, and the color story you want on your shelf.
+        </p>
+        <div className="c-hero__actions">
+          <a href={cartUrl(current.variantId)} className="btn btn--primary">Shop Now</a>
+          <a href="#colors" className="btn btn--outline">Explore Colors</a>
         </div>
+      </div>
+      <div className="c-hero__scroll">
+        <span>Scroll</span>
+        <div className="c-hero__scroll-line" />
+      </div>
+    </section>
+  );
+}
 
-        <header className="topbar">
-          <a className="topbar__brand" href="#top" aria-label="Coilo home">
-            <img
-              src="/media/coilo-logo.png"
-              alt=""
-              className="topbar__logo"
-            />
-            <span>Coilo</span>
-          </a>
-          <nav className="topbar__nav" aria-label="Primary navigation">
-            <a href="#colors">Colors</a>
-            <a href="#details">Details</a>
-            <a href={defaultBuyUrl}>Shopify checkout</a>
-          </nav>
-        </header>
+// ── IntroStrip ────────────────────────────────────────
+function IntroStrip() {
+  const specs = [
+    { label: "Material", value: "3D printed PLA" },
+    { label: "Dimensions", value: "245 × 178 × 192 mm" },
+    { label: "Shipping", value: "Ships from Germany" },
+    { label: "Price", value: "€39" },
+  ];
+  return (
+    <section className="c-intro">
+      <RevealWrap className="c-intro__copy">
+        <h2>A bookshelf that behaves like an object.</h2>
+        <p>The continuous spiral holds printed pieces upright while giving the shelf
+           a clean, intentional line from every angle.</p>
+      </RevealWrap>
+      <div className="c-intro__specs">
+        {specs.map((s, i) => (
+          <RevealWrap key={s.label} className="c-intro__spec" delay={i * 100}>
+            <span className="c-intro__spec-label">{s.label}</span>
+            <span className="c-intro__spec-value">{s.value}</span>
+          </RevealWrap>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-        <div className="hero__content" id="top">
-          <p className="hero__brand">Coilo</p>
-          <h1 id="hero-title">Modern Spiral Bookshelf</h1>
-          <p className="hero__copy">
-            A sculptural 3D printed holder for books, magazines, and the color
-            story you want on the shelf.
-          </p>
-          <div className="hero__actions" aria-label="Purchase actions">
-            <a className="button button--primary" href={defaultBuyUrl}>
-              Buy with Shopify
+// ── ProductGallery ────────────────────────────────────
+function ProductGallery() {
+  return (
+    <section className="c-gallery" id="colors">
+      <RevealWrap className="c-gallery__header">
+        <h2>Five colors.<br />One iconic shape.</h2>
+        <p>Each finish is matched to a mood — pick the one that fits your shelf.</p>
+      </RevealWrap>
+      <div className="c-gallery__grid">
+        {PRODUCTS.map((p, i) => (
+          <RevealWrap key={p.name} className="c-gallery__card" delay={i * 80}
+                      style={{ "--card-accent": p.accent } as CSSProperties}>
+            <a href={cartUrl(p.variantId)} className="c-gallery__link">
+              <div className="c-gallery__img-wrap">
+                <img src={p.image} alt={`${p.name} Coilo bookshelf`}
+                     className="c-gallery__img" loading="lazy" />
+                <div className="c-gallery__hover">
+                  <span className="c-gallery__hover-btn">Buy {p.name}</span>
+                </div>
+              </div>
+              <div className="c-gallery__body">
+                <span className="c-gallery__tone" style={{ color: p.accent }}>{p.tone}</span>
+                <h3 className="c-gallery__name">{p.name}</h3>
+              </div>
             </a>
-            <a className="button button--secondary" href="#colors">
-              View colors
+          </RevealWrap>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ── ColorConfigurator ─────────────────────────────────
+function ColorConfigurator() {
+  const [sel, setSel] = useState(0);
+  const product = PRODUCTS[sel];
+  return (
+    <section className="c-config" id="configurator"
+             style={{ "--config-accent": product.accent } as CSSProperties}>
+      <div className="c-config__content">
+        <RevealWrap>
+          <p className="c-config__eyebrow">Color Configurator</p>
+          <h2 className="c-config__title">Find your color.</h2>
+        </RevealWrap>
+        <div className="c-config__swatches">
+          {PRODUCTS.map((p, i) => (
+            <button key={p.name}
+                    className={`c-config__swatch ${i === sel ? "active" : ""}`}
+                    onClick={() => setSel(i)} aria-label={p.name}>
+              <span className="c-config__swatch-dot" style={{ background: p.accent }} />
+              <span className="c-config__swatch-name">{p.name}</span>
+            </button>
+          ))}
+        </div>
+        <div className="c-config__info">
+          <span className="c-config__tone" style={{ color: product.accent }}>{product.tone}</span>
+          <h3 className="c-config__color-name">{product.name}</h3>
+          <p className="c-config__desc">{product.description}</p>
+          <div className="c-config__buy-row">
+            <span className="c-config__price">€39</span>
+            <a href={cartUrl(product.variantId)}
+               className="btn btn--accent"
+               style={{ background: product.accent, color: product.accent === "#f2b600" ? "#111" : "#fff" }}>
+              Buy Now
             </a>
           </div>
         </div>
-      </section>
+      </div>
+      <div className="c-config__display">
+        {PRODUCTS.map((p, i) => (
+          <img key={p.name} src={p.image} alt={p.name}
+               className={`c-config__product-img ${i === sel ? "active" : ""}`}
+               loading="lazy" />
+        ))}
+      </div>
+    </section>
+  );
+}
 
-      <section className="intro-section" aria-labelledby="intro-title">
-        <div className="intro-section__copy">
-          <h2 id="intro-title">A bookshelf that behaves like an object.</h2>
-          <p>
-            The continuous spiral holds printed pieces upright while giving the
-            shelf a clean, intentional line from every angle.
+// ── DetailsSection ────────────────────────────────────
+function DetailsSection() {
+  const features = [
+    { title: "3D Printed in PLA", desc: "Lightweight, durable and eco-friendly material with a smooth finish." },
+    { title: "Sculptural Spiral Design", desc: "Smooth curves that hold books beautifully from every angle." },
+    { title: "Compact Footprint", desc: "245 × 178 × 192 mm — fits desks, shelves, and sideboards." },
+    { title: "Ships from Germany", desc: "Carefully packed and shipped across Europe. Fast and reliable." },
+  ];
+  return (
+    <section className="c-details" id="details">
+      <div className="c-details__image">
+        <img src="/media/pink-spiral.png" alt="Rosé Coilo bookshelf" loading="lazy" />
+      </div>
+      <div className="c-details__copy">
+        <RevealWrap>
+          <p className="c-details__eyebrow">Crafted with Care</p>
+          <h2>Printed for daily display.</h2>
+          <p className="c-details__lead">
+            Made from PLA with a smooth looped profile, the spiral keeps favorite
+            books, magazines, and art catalogs visible — not stacked away.
           </p>
-        </div>
-        <dl className="spec-strip" aria-label="Product specifications">
-          {productSpecs.map((spec) => (
-            <div key={spec}>
-              <dt>{spec.includes("€") || spec.includes("$") ? "Price" : "Spec"}</dt>
-              <dd>{spec}</dd>
-            </div>
+        </RevealWrap>
+        <ul className="c-details__features">
+          {features.map((f, i) => (
+            <RevealWrap key={f.title} delay={i * 100}>
+              <li className="c-details__feature">
+                <strong>{f.title}</strong>
+                <span>{f.desc}</span>
+              </li>
+            </RevealWrap>
           ))}
-        </dl>
-      </section>
+        </ul>
+      </div>
+    </section>
+  );
+}
 
-      <section className="video-section" aria-label="Coilo product motion preview">
-        <video
-          className="product-video"
-          src="/media/coilo-motion.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="/media/pink-spiral.png"
-        />
-      </section>
+// ── EtsyBanner ────────────────────────────────────────
+function EtsyBanner() {
+  return (
+    <section className="c-etsy">
+      <RevealWrap className="c-etsy__inner">
+        <div className="c-etsy__text">
+          <h3>Also available on Etsy</h3>
+          <p>Support a small business. Secure checkout. 30-day returns.</p>
+        </div>
+        <a href={ETSY_URL} target="_blank" rel="noopener" className="btn btn--etsy">
+          Visit our Etsy Shop
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+      </RevealWrap>
+    </section>
+  );
+}
 
-      <section className="colors-section" id="colors" aria-labelledby="colors-title">
-        <div className="section-heading">
-          <h2 id="colors-title">Choose the room&apos;s accent.</h2>
-          <p>
-            Four vivid finishes, each with the same smooth spiral silhouette and
-            compact footprint.
-          </p>
+// ── FooterCTA ─────────────────────────────────────────
+function FooterCTA() {
+  return (
+    <section className="c-footer">
+      <RevealWrap className="c-footer__inner">
+        <img src="/media/coilo-logo.png" alt="" className="c-footer__logo" />
+        <h2>Bring the spiral<br />to your shelf.</h2>
+        <p>Order the Modern Spiral Bookshelf and choose the finish that fits your space.</p>
+        <div className="c-footer__actions">
+          <a href={cartUrl(PRODUCTS[0].variantId)} className="btn btn--primary">Shop Now</a>
+          <a href="#configurator" className="btn btn--outline btn--dark">Pick a Color</a>
         </div>
+      </RevealWrap>
+      <footer className="c-footer__bar">
+        <span>© 2026 Coilo</span>
+        <div className="c-footer__links">
+          <a href="#colors">Colors</a>
+          <a href="#details">Details</a>
+          <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
+        </div>
+      </footer>
+    </section>
+  );
+}
 
-        <div className="color-gallery">
-          {colors.map((color) => (
-            <a
-              className="color-panel"
-              href={cartUrl(color.variantId)}
-              key={color.name}
-              style={{ "--accent": color.accent } as CSSProperties}
-            >
-              <div className="color-panel__image-wrap">
-                <img
-                  src={color.image}
-                  alt={`${color.name} Coilo spiral bookshelf`}
-                  className="color-panel__image"
-                />
-              </div>
-              <div className="color-panel__body">
-                <p>{color.tone}</p>
-                <h3>{color.name}</h3>
-                <span>{color.description}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="details-section" id="details" aria-labelledby="details-title">
-        <div className="details-section__image">
-          <img
-            src="/media/pink-spiral.png"
-            alt="Pink Coilo spiral bookshelf holding editorial magazines"
-          />
-        </div>
-        <div className="details-section__copy">
-          <h2 id="details-title">Printed for daily display.</h2>
-          <p>
-            Made from PLA with a smooth looped profile, {productTitle} keeps favorite
-            books, magazines, notebooks, and art catalogs visible instead of
-            stacked away.
-          </p>
-          <ul>
-            <li>Compact footprint for desks, shelves, and sideboards.</li>
-            <li>Lightweight 3D printed construction with a bold sculptural shape.</li>
-            <li>Headless Shopify checkout keeps payment and order handling native.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section className="final-cta" aria-labelledby="final-title">
-        <img
-          src="/media/coilo-logo.png"
-          alt=""
-          className="final-cta__logo"
-        />
-        <h2 id="final-title">Bring the spiral to your shelf.</h2>
-        <p>
-          Order {productTitle} through Shopify checkout and choose the finish
-          that fits your shelf.
-        </p>
-        <div className="hero__actions">
-          <a className="button button--primary" href={defaultBuyUrl}>
-            Buy with Shopify
-          </a>
-          <a className="button button--secondary button--dark" href="#colors">
-            Pick a color
-          </a>
-        </div>
-      </section>
-    </main>
+// ── App ────────────────────────────────────────────────
+export default function Home() {
+  return (
+    <div data-theme="chromatic">
+      <NavBar />
+      <HeroSection />
+      <IntroStrip />
+      <ProductGallery />
+      <ColorConfigurator />
+      <DetailsSection />
+      <EtsyBanner />
+      <FooterCTA />
+    </div>
   );
 }
