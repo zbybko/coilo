@@ -71,7 +71,15 @@ function RevealWrap({ children, className = "", delay = 0, style = {} }:
 
 // ── NavBar ────────────────────────────────────────────
 function NavBar() {
-  const scrolled = useScrolled();
+  // stay transparent over the full-height spiral hero (~480vh); only go
+  // solid once the content sections below reach the top
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > window.innerHeight * 4.7);
+    window.addEventListener("scroll", fn, { passive: true });
+    fn();
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
   const [menuOpen, setMenu] = useState(false);
   return (
     <nav className={`c-nav ${scrolled ? "c-nav--solid" : ""}`}>
