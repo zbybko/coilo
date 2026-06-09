@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, CSSProperties } from "react";
+import SiteNav from "../components/SiteNav";
 
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 
@@ -186,21 +187,7 @@ export default function AboutPage() {
       `}</style>
 
       {/* Nav */}
-      <nav className="about-nav">
-        <a href="/" className="about-nav__brand">
-          <img src="/media/coilo-logo.png" alt="Coilo" />
-          <span>Coilo</span>
-        </a>
-        <div className="about-nav__links">
-          <a href="/">Home</a>
-          <a href="/about" className="active">How It&apos;s Made</a>
-          <a href="/colors">Colors</a>
-          <a href={ETSY_URL} target="_blank" rel="noopener" className="about-nav__cta">
-            Shop on Etsy
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
-        </div>
-      </nav>
+      <SiteNav active="about" />
 
       {/* Hero */}
       <section className="about-hero">

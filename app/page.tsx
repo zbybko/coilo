@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, CSSProperties } from "react";
 import SpiralHero from "./components/SpiralHero";
+import SiteNav from "./components/SiteNav";
 
 // ── Data ─────────────────────────────────────────────
 const SHOPIFY_STORE = "coilo.myshopify.com";
@@ -69,32 +70,7 @@ function RevealWrap({ children, className = "", delay = 0, style = {} }:
   );
 }
 
-// ── NavBar ────────────────────────────────────────────
-function NavBar() {
-  // header stays fully transparent — no dark background bar at any scroll
-  const [menuOpen, setMenu] = useState(false);
-  return (
-    <nav className="c-nav">
-      <a href="#top" className="c-nav__brand">
-        <img src="/media/coilo-logo.png" alt="Coilo" className="c-nav__logo-img" />
-      </a>
-      <div className={`c-nav__links ${menuOpen ? "open" : ""}`}>
-        <a href="/colors" onClick={() => setMenu(false)}>Colors</a>
-        <a href="/about" onClick={() => setMenu(false)}>How It's Made</a>
-        <a href="#configurator" onClick={() => setMenu(false)}>Configure</a>
-        <a href={ETSY_URL} target="_blank" rel="noopener" className="c-nav__cta"
-           onClick={() => setMenu(false)}>
-          Shop on Etsy
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
-      </div>
-      <button className={`c-nav__burger ${menuOpen ? "open" : ""}`}
-              onClick={() => setMenu(!menuOpen)} aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </nav>
-  );
-}
+// ── NavBar: shared <SiteNav /> (app/components/SiteNav.tsx) ──
 
 // ── HeroSection: replaced by <SpiralHero /> (scroll-driven flythrough) ──
 
@@ -288,7 +264,7 @@ function FooterCTA() {
 export default function Home() {
   return (
     <div data-theme="chromatic">
-      <NavBar />
+      <SiteNav />
       <div id="top"><SpiralHero /></div>
       <IntroStrip />
       <ProductGallery />

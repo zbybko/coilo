@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, CSSProperties } from "react";
+import SiteNav from "../components/SiteNav";
 
 const SHOPIFY_STORE = "coilo.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
@@ -168,21 +169,7 @@ export default function ColorsPage() {
 
       <div className="colors-page">
         {/* Nav */}
-        <nav className="col-nav">
-          <a href="/" className="col-nav__brand">
-            <img src="/media/coilo-logo.png" alt="Coilo" />
-            <span>Coilo</span>
-          </a>
-          <div className="col-nav__links">
-            <a href="/">Home</a>
-            <a href="/about">How It&apos;s Made</a>
-            <a href="/colors" className="active">Colors</a>
-            <a href={ETSY_URL} target="_blank" rel="noopener" className="col-nav__cta">
-              Shop on Etsy
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-            </a>
-          </div>
-        </nav>
+        <SiteNav active="colors" />
 
         {/* Side dots */}
         <div className="side-nav">
