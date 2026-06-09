@@ -83,7 +83,7 @@ function IntroStrip() {
     { label: "Price", value: "€39" },
   ];
   return (
-    <section className="c-intro">
+    <section className="c-intro" data-nav-theme="light">
       <RevealWrap className="c-intro__copy">
         <h2>A bookshelf that behaves like an object.</h2>
         <p>The continuous spiral holds printed pieces upright while giving the shelf

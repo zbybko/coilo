@@ -73,6 +73,16 @@ h1,h2,h3,p { margin: 0; }
 .c-nav__burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .c-nav__burger.open span:nth-child(2) { opacity: 0; }
 .c-nav__burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+/* adaptive text colour: dark over light backgrounds */
+.c-nav__brand, .c-nav__links a, .c-nav__cta, .c-nav__burger span {
+  transition: color .3s ease, border-color .3s ease, background-color .3s ease; }
+.c-nav--light .c-nav__brand,
+.c-nav--light .c-nav__links { color: #15110e; }
+.c-nav--light .c-nav__links a:hover,
+.c-nav--light .c-nav__links a.active { color: #000; }
+.c-nav--light .c-nav__cta { color: #15110e; border-color: rgba(0,0,0,.28); }
+.c-nav--light .c-nav__cta:hover { border-color: rgba(0,0,0,.55); }
+.c-nav--light .c-nav__burger span { background: #15110e; }
 
 /* ── Hero ──────────────────────────────────────────── */
 .c-hero { position: relative; min-height: 100svh; display: grid; align-items: end;
