@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const FRAME_COUNT = 280;
+// stop on the dark tunnel-exit (frames 253-280 brighten to cream — unused so the
+// hero hands off into the dark site below)
+const FRAME_COUNT = 252;
 const SCROLL_VH = 480; // height of the pinned scroll track, in vh
 const framePath = (i: number) =>
   `/media/spiral/frame_${String(i + 1).padStart(4, "0")}.webp`;
@@ -18,7 +20,7 @@ type Act = {
 
 // progress ranges (0..1) mapped to the 280-frame journey
 const ACTS: Act[] = [
-  { from: 0.02, to: 0.14, kicker: "3D-printed design object", title: "Coilo", sub: "Where design unwinds.", brand: true },
+  { from: 0.0, to: 0.14, kicker: "3D-printed design object", title: "Coilo", sub: "Where design unwinds.", brand: true },
   { from: 0.24, to: 0.36, title: "One continuous line", sub: "A single sweeping coil holds your books upright — structure becomes ornament." },
   { from: 0.46, to: 0.58, title: "Printed, not manufactured", sub: "Premium PLA, precision FDM, finished by hand. Made in Germany." },
   { from: 0.68, to: 0.8, title: "Five finishes. One icon.", sub: "Cyan · Sakura · Cherry · Sunflower · Rosé" },
