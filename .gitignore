@@ -43,3 +43,6 @@ next-env.d.ts
 /dist/
 /.vinext/
 /.wrangler/
+
+# heavy Blender render frames (web uses public/media/spiral)
+render/
