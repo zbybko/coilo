@@ -71,18 +71,10 @@ function RevealWrap({ children, className = "", delay = 0, style = {} }:
 
 // ── NavBar ────────────────────────────────────────────
 function NavBar() {
-  // stay transparent over the full-height spiral hero (~480vh); only go
-  // solid once the content sections below reach the top
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > window.innerHeight * 4.7);
-    window.addEventListener("scroll", fn, { passive: true });
-    fn();
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
+  // header stays fully transparent — no dark background bar at any scroll
   const [menuOpen, setMenu] = useState(false);
   return (
-    <nav className={`c-nav ${scrolled ? "c-nav--solid" : ""}`}>
+    <nav className="c-nav">
       <a href="#top" className="c-nav__brand">
         <img src="/media/coilo-logo.png" alt="Coilo" className="c-nav__logo-img" />
       </a>
