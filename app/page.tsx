@@ -85,7 +85,6 @@ function NavBar() {
     <nav className={`c-nav ${scrolled ? "c-nav--solid" : ""}`}>
       <a href="#top" className="c-nav__brand">
         <img src="/media/coilo-logo.png" alt="Coilo" className="c-nav__logo-img" />
-        <span>Coilo</span>
       </a>
       <div className={`c-nav__links ${menuOpen ? "open" : ""}`}>
         <a href="/colors" onClick={() => setMenu(false)}>Colors</a>
