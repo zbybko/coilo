@@ -212,10 +212,13 @@ h1,h2,h3,p { margin: 0; }
 .c-config__buy-row { display: flex; align-items: center; gap: 24px; }
 .c-config__price { font-size: 36px; font-weight: 700; }
 .c-config__buy-row .btn { padding: 15px 34px; font-size: 15px; }
-.c-config__display { position: relative; overflow: hidden; padding: clamp(28px,4vw,72px); }
-.c-config__product-img { position: absolute; inset: clamp(28px,4vw,72px); width: auto; height: auto;
-  object-fit: cover; border-radius: 24px; opacity: 0; transition: opacity .8s ease;
-  box-shadow: 0 40px 90px -28px color-mix(in oklch, var(--config-accent) 75%, transparent); }
+.c-config__display { position: relative; overflow: hidden; padding: clamp(24px,3.5vw,64px); }
+.c-config__display::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(68% 58% at 50% 46%,
+    color-mix(in oklch, var(--config-accent) 22%, transparent), transparent 74%); }
+.c-config__product-img { position: absolute; inset: clamp(24px,3.5vw,64px); width: auto; height: auto;
+  object-fit: contain; opacity: 0; transition: opacity .8s ease;
+  filter: drop-shadow(0 26px 55px color-mix(in oklch, var(--config-accent) 32%, transparent)); }
 .c-config__product-img.active { opacity: 1; }
 
 /* ── Details ───────────────────────────────────────── */
