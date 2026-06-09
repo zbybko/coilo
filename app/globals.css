@@ -171,7 +171,7 @@ h1,h2,h3,p { margin: 0; }
   background: color-mix(in oklch, var(--card-accent) 8%, #1a1a1a); }
 
 /* ── Configurator ──────────────────────────────────── */
-.c-config { display: grid; grid-template-columns: 1fr 1fr; min-height: 680px;
+.c-config { display: grid; grid-template-columns: 1fr 1.05fr; min-height: clamp(720px,92vh,920px);
   background: var(--bg); position: relative; overflow: hidden;
   transition: background .6s; }
 [data-theme="chromatic"] .c-config {
@@ -180,28 +180,32 @@ h1,h2,h3,p { margin: 0; }
   display: flex; flex-direction: column; justify-content: center; }
 .c-config__eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase;
   letter-spacing: .15em; color: var(--text-muted); margin-bottom: 12px; }
-.c-config__title { font-family: var(--font-display); font-size: clamp(36px,4.5vw,64px);
-  font-weight: 400; line-height: 1; margin-bottom: 32px; }
-.c-config__swatches { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
-.c-config__swatch { display: flex; align-items: center; gap: 8px; padding: 8px 16px 8px 10px;
-  border-radius: 999px; border: 1.5px solid rgba(255,255,255,.12);
-  font-size: 13px; font-weight: 600; transition: border-color .25s, background .25s; }
+.c-config__title { font-family: var(--font-display); font-size: clamp(42px,5.5vw,78px);
+  font-weight: 400; line-height: 1; margin-bottom: 40px; }
+.c-config__swatches { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 44px; }
+.c-config__swatch { display: flex; align-items: center; gap: 9px; padding: 11px 22px 11px 13px;
+  border-radius: 999px; border: 1.5px solid rgba(255,255,255,.14);
+  font-size: 14.5px; font-weight: 600; transition: border-color .25s, background .25s, transform .2s; }
+.c-config__swatch:hover { transform: translateY(-1px); }
 .c-config__swatch:hover { border-color: rgba(255,255,255,.3); }
 .c-config__swatch.active { border-color: rgba(255,255,255,.5); background: rgba(255,255,255,.08); }
-.c-config__swatch-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+.c-config__swatch-dot { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.15) inset; }
 .c-config__swatch-name { white-space: nowrap; }
 .c-config__info { margin-top: 4px; }
 .c-config__tone { font-size: 12px; font-weight: 800; text-transform: uppercase;
   letter-spacing: .1em; transition: color .4s; }
-.c-config__color-name { font-family: var(--font-display); font-size: clamp(32px,3.5vw,52px);
-  margin: 6px 0 14px; }
-.c-config__desc { color: var(--text-muted); font-size: 15px; line-height: 1.65;
-  max-width: 400px; margin-bottom: 28px; }
-.c-config__buy-row { display: flex; align-items: center; gap: 20px; }
-.c-config__price { font-size: 28px; font-weight: 700; }
-.c-config__display { position: relative; overflow: hidden; }
-.c-config__product-img { position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; opacity: 0; transition: opacity .8s ease; }
+.c-config__color-name { font-family: var(--font-display); font-size: clamp(40px,4.5vw,70px);
+  margin: 10px 0 18px; }
+.c-config__desc { color: var(--text-muted); font-size: 16.5px; line-height: 1.7;
+  max-width: 440px; margin-bottom: 36px; }
+.c-config__buy-row { display: flex; align-items: center; gap: 24px; }
+.c-config__price { font-size: 36px; font-weight: 700; }
+.c-config__buy-row .btn { padding: 15px 34px; font-size: 15px; }
+.c-config__display { position: relative; overflow: hidden; padding: clamp(28px,4vw,72px); }
+.c-config__product-img { position: absolute; inset: clamp(28px,4vw,72px); width: auto; height: auto;
+  object-fit: cover; border-radius: 24px; opacity: 0; transition: opacity .8s ease;
+  box-shadow: 0 40px 90px -28px color-mix(in oklch, var(--config-accent) 75%, transparent); }
 .c-config__product-img.active { opacity: 1; }
 
 /* ── Details ───────────────────────────────────────── */

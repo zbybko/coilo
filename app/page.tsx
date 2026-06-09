@@ -9,19 +9,19 @@ const SHOPIFY_STORE = "coilo.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 
 const PRODUCTS = [
-  { name: "Cyan", tone: "Electric blue", image: "/media/cyan.png", accent: "#08a6ff",
+  { name: "Cyan", tone: "Electric blue", image: "/media/cyan.png", accent: "#0086D6",
     description: "A saturated blue built for desks, gaming shelves, and crisp studio spaces.",
     variantId: "61987185787210" },
-  { name: "Sakura", tone: "Soft pink", image: "/media/sakura.webp", accent: "#ff7da6",
+  { name: "Sakura", tone: "Soft pink", image: "/media/sakura.webp", accent: "#F5547C",
     description: "A bright floral pink that turns favorite books into a soft display moment.",
     variantId: "62010088554826" },
-  { name: "Cherry", tone: "Deep red", image: "/media/cherry.png", accent: "#b80f2d",
+  { name: "Cherry", tone: "Deep red", image: "/media/cherry.png", accent: "#9D2235",
     description: "A richer red for bold shelves, editorial stacks, and warmer interiors.",
     variantId: "62010088587594" },
-  { name: "Sunflower", tone: "Warm yellow", image: "/media/sunflower.png", accent: "#f2b600",
+  { name: "Sunflower", tone: "Warm yellow", image: "/media/sunflower.png", accent: "#FEC600",
     description: "A sunny yellow that makes the spiral feel like a sculptural accent piece.",
     variantId: "62010088620362" },
-  { name: "Rosé", tone: "Soft pink", image: "/media/pink-spiral.png", accent: "#f4a0b5",
+  { name: "Rosé", tone: "Soft pink", image: "/media/pink-spiral.png", accent: "#F55A74",
     description: "A delicate rose tone that brings warmth and softness to any shelf or desk.",
     variantId: "62010091077962" },
 ];
@@ -163,7 +163,7 @@ function ColorConfigurator() {
             <span className="c-config__price">€39</span>
             <a href={cartUrl(product.variantId)}
                className="btn btn--accent"
-               style={{ background: product.accent, color: product.accent === "#f2b600" ? "#111" : "#fff" }}>
+               style={{ background: product.accent, color: product.name === "Sunflower" ? "#111" : "#fff" }}>
               Buy Now
             </a>
           </div>
@@ -267,7 +267,7 @@ export default function Home() {
       <SiteNav />
       <div id="top"><SpiralHero /></div>
       <IntroStrip />
-      <ProductGallery />
+      {/* <ProductGallery /> — hidden for now */}
       <ColorConfigurator />
       <DetailsSection />
       <EtsyBanner />
