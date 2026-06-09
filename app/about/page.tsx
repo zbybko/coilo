@@ -119,7 +119,7 @@ export default function AboutPage() {
           letter-spacing:.1em; color:rgba(17,17,17,.35); margin-bottom:6px; }
         .step__detail-value { font-size:15px; font-weight:600; line-height:1.5; }
 
-        .materials { display:grid; grid-template-columns:1fr 1fr; min-height:560px; }
+        .materials { display:grid; grid-template-columns:1fr; }
         .materials__image { position:relative; overflow:hidden; }
         .materials__image img { width:100%; height:100%; object-fit:cover; display:block; }
         .materials__content { padding:clamp(48px,6vw,96px); display:flex; flex-direction:column;
@@ -238,9 +238,6 @@ export default function AboutPage() {
 
       {/* Materials */}
       <section className="materials">
-        <div className="materials__image">
-          <img src="/media/approved-concept.png" alt="Coilo spiral concept" loading="lazy" />
-        </div>
         <div className="materials__content">
           <Rv>
             <p className="materials__eyebrow">Material</p>
