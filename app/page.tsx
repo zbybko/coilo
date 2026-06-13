@@ -7,23 +7,79 @@ import SiteNav from "./components/SiteNav";
 // ── Data ─────────────────────────────────────────────
 const SHOPIFY_STORE = "coilo.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
+const SUPPORT_EMAIL = "support@coilo.de";
+const A = "/media/site-assets"; // optimized lifestyle/studio assets
 
-const PRODUCTS = [
-  { name: "Cyan", tone: "Electric blue", image: "/media/cyan.png", accent: "#0086D6",
+type ProductImage = { src: string; alt: string; w: number; h: number };
+type Product = {
+  name: string;
+  tone: string;
+  accent: string; // bright finish colour (UI accent)
+  text: string;   // deep tone for headings on light backgrounds
+  description: string;
+  variantId: string;
+  soldOut?: boolean;
+  images: ProductImage[]; // lifestyle first, studio after
+};
+
+const PRODUCTS: Product[] = [
+  {
+    name: "Cyan", tone: "Electric blue", accent: "#1BA6DF", text: "#0A4A63",
     description: "A saturated blue built for desks, gaming shelves, and crisp studio spaces.",
-    variantId: "61987185787210" },
-  { name: "Sakura", tone: "Soft pink", image: "/media/sakura.webp", accent: "#F5547C",
+    variantId: "61987185787210",
+    images: [
+      { src: `${A}/colors/cyan/cyan-1.webp`, alt: "Coilo Spiral Bookshelf in Cyan on an oak sideboard", w: 2000, h: 1493 },
+      { src: `${A}/colors/cyan/cyan-2.webp`, alt: "Coilo Spiral Bookshelf in Cyan in an ocean-toned interior", w: 2000, h: 1493 },
+      { src: `${A}/colors/cyan/cyan-3.webp`, alt: "Coilo Spiral Bookshelf in Cyan on a gallery shelf", w: 2000, h: 1493 },
+      { src: `${A}/colors/cyan/cyan-studio.webp`, alt: "Coilo Spiral Bookshelf in Cyan, studio shot", w: 1600, h: 2153 },
+    ],
+  },
+  {
+    name: "Sakura", tone: "Soft pink", accent: "#F2A3BE", text: "#8A3A52",
     description: "A bright floral pink that turns favorite books into a soft display moment.",
-    variantId: "62010088554826" },
-  { name: "Cherry", tone: "Deep red", image: "/media/cherry.png", accent: "#9D2235",
+    variantId: "62010088554826", soldOut: true,
+    images: [
+      { src: `${A}/colors/sakura/sakura-1.webp`, alt: "Coilo Spiral Bookshelf in Sakura in a soft interior", w: 2000, h: 1493 },
+      { src: `${A}/colors/sakura/sakura-studio.webp`, alt: "Coilo Spiral Bookshelf in Sakura, studio shot", w: 1600, h: 2143 },
+      { src: `${A}/colors/sakura/sakura-studio-2.webp`, alt: "Coilo Spiral Bookshelf in Sakura, studio detail", w: 1600, h: 2128 },
+    ],
+  },
+  {
+    name: "Cherry", tone: "Deep red", accent: "#C0303A", text: "#5E1418",
     description: "A richer red for bold shelves, editorial stacks, and warmer interiors.",
-    variantId: "62010088587594" },
-  { name: "Sunflower", tone: "Warm yellow", image: "/media/sunflower.png", accent: "#FEC600",
+    variantId: "62010088587594",
+    images: [
+      { src: `${A}/colors/cherry/cherry-1.webp`, alt: "Coilo Spiral Bookshelf in Cherry in a warm interior", w: 2000, h: 1493 },
+      { src: `${A}/colors/cherry/cherry-2.webp`, alt: "Coilo Spiral Bookshelf in Cherry on a styled shelf", w: 2000, h: 1493 },
+      { src: `${A}/colors/cherry/cherry-studio.webp`, alt: "Coilo Spiral Bookshelf in Cherry, studio shot", w: 1600, h: 2143 },
+      { src: `${A}/colors/cherry/cherry-studio-2.webp`, alt: "Coilo Spiral Bookshelf in Cherry, studio detail", w: 1600, h: 2143 },
+    ],
+  },
+  {
+    name: "Sunflower", tone: "Warm yellow", accent: "#F2A900", text: "#6E4E00",
     description: "A sunny yellow that makes the spiral feel like a sculptural accent piece.",
-    variantId: "62010088620362" },
-  { name: "Rosé", tone: "Soft pink", image: "/media/pink-spiral.png", accent: "#F55A74",
+    variantId: "62010088620362",
+    images: [
+      { src: `${A}/colors/sunflower/sunflower-1.webp`, alt: "Coilo Spiral Bookshelf in Sunflower in a bright interior", w: 2000, h: 1493 },
+      { src: `${A}/colors/sunflower/sunflower-studio.webp`, alt: "Coilo Spiral Bookshelf in Sunflower, studio shot", w: 1085, h: 1450 },
+    ],
+  },
+  {
+    name: "Rosé", tone: "Soft pink", accent: "#F0457A", text: "#7A1E3C",
     description: "A delicate rose tone that brings warmth and softness to any shelf or desk.",
-    variantId: "62010091077962" },
+    variantId: "62010091077962",
+    images: [
+      { src: `${A}/colors/rose/rose-1.webp`, alt: "Coilo Spiral Bookshelf in Rosé in a soft interior", w: 2000, h: 1493 },
+      { src: `${A}/colors/rose/rose-studio.webp`, alt: "Coilo Spiral Bookshelf in Rosé, studio shot", w: 1086, h: 1448 },
+    ],
+  },
+];
+
+const PRICE = "€59";
+
+const REVIEWS = [
+  { name: "Larin", meta: "June 2026", text: "Really beautiful product!! I would recommend." },
+  { name: "Hayley", meta: "New Zealand · May 2026", text: "Arrived in New Zealand safe and well. I love it!" },
 ];
 
 function cartUrl(variantId: string) {
@@ -45,17 +101,6 @@ function useScrollReveal(threshold = 0.15) {
     return () => obs.disconnect();
   }, [threshold]);
   return ref;
-}
-
-function useScrolled(offset = 60) {
-  const [s, set] = useState(false);
-  useEffect(() => {
-    const fn = () => set(window.scrollY > offset);
-    window.addEventListener("scroll", fn, { passive: true });
-    fn();
-    return () => window.removeEventListener("scroll", fn);
-  }, [offset]);
-  return s;
 }
 
 // ── RevealWrap ────────────────────────────────────────
@@ -80,7 +125,7 @@ function IntroStrip() {
     { label: "Material", value: "3D printed PLA" },
     { label: "Dimensions", value: "245 × 178 × 192 mm" },
     { label: "Shipping", value: "Ships from Germany" },
-    { label: "Price", value: "€39" },
+    { label: "Price", value: PRICE },
   ];
   return (
     <section className="c-intro" data-nav-theme="light">
@@ -89,45 +134,22 @@ function IntroStrip() {
         <p>The continuous spiral holds printed pieces upright while giving the shelf
            a clean, intentional line from every angle.</p>
       </RevealWrap>
-      <div className="c-intro__specs">
-        {specs.map((s, i) => (
-          <RevealWrap key={s.label} className="c-intro__spec" delay={i * 100}>
-            <span className="c-intro__spec-label">{s.label}</span>
-            <span className="c-intro__spec-value">{s.value}</span>
-          </RevealWrap>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ── ProductGallery ────────────────────────────────────
-function ProductGallery() {
-  return (
-    <section className="c-gallery" id="colors">
-      <RevealWrap className="c-gallery__header">
-        <h2>Five colors.<br />One iconic shape.</h2>
-        <p>Each finish is matched to a mood — pick the one that fits your shelf.</p>
-      </RevealWrap>
-      <div className="c-gallery__grid">
-        {PRODUCTS.map((p, i) => (
-          <RevealWrap key={p.name} className="c-gallery__card" delay={i * 80}
-                      style={{ "--card-accent": p.accent } as CSSProperties}>
-            <a href={cartUrl(p.variantId)} className="c-gallery__link">
-              <div className="c-gallery__img-wrap">
-                <img src={p.image} alt={`${p.name} Coilo bookshelf`}
-                     className="c-gallery__img" loading="lazy" />
-                <div className="c-gallery__hover">
-                  <span className="c-gallery__hover-btn">Buy {p.name}</span>
-                </div>
-              </div>
-              <div className="c-gallery__body">
-                <span className="c-gallery__tone" style={{ color: p.accent }}>{p.tone}</span>
-                <h3 className="c-gallery__name">{p.name}</h3>
-              </div>
-            </a>
-          </RevealWrap>
-        ))}
+      <div className="c-intro__right">
+        <div className="c-intro__specs">
+          {specs.map((s, i) => (
+            <RevealWrap key={s.label} className="c-intro__spec" delay={i * 100}>
+              <span className="c-intro__spec-label">{s.label}</span>
+              <span className="c-intro__spec-value">{s.value}</span>
+            </RevealWrap>
+          ))}
+        </div>
+        <RevealWrap className="c-intro__size" delay={200}>
+          <figure>
+            <img src={`${A}/shared/size-infographic.webp`}
+                 alt="Coilo Spiral Bookshelf dimensions: 245 × 178 × 192 mm"
+                 width={2000} height={2000} loading="lazy" />
+          </figure>
+        </RevealWrap>
       </div>
     </section>
   );
@@ -136,7 +158,25 @@ function ProductGallery() {
 // ── ColorConfigurator ─────────────────────────────────
 function ColorConfigurator() {
   const [sel, setSel] = useState(0);
+  const [slide, setSlide] = useState(0);
+  const touchX = useRef<number | null>(null);
   const product = PRODUCTS[sel];
+  const images = product.images;
+
+  // reset slider to first frame whenever the colour changes
+  const pick = (i: number) => { setSel(i); setSlide(0); };
+
+  const go = (dir: number) =>
+    setSlide((s) => (s + dir + images.length) % images.length);
+
+  const onTouchStart = (e: React.TouchEvent) => { touchX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    touchX.current = null;
+  };
+
   return (
     <section className="c-config" id="configurator"
              style={{ "--config-accent": product.accent } as CSSProperties}>
@@ -152,7 +192,7 @@ function ColorConfigurator() {
             {PRODUCTS.map((p, i) => (
               <button key={p.name}
                       className={`c-config__swatch ${i === sel ? "active" : ""}`}
-                      onClick={() => setSel(i)} aria-label={p.name}>
+                      onClick={() => pick(i)} aria-label={p.name}>
                 <span className="c-config__swatch-dot" style={{ background: p.accent }} />
                 <span className="c-config__swatch-name">{p.name}</span>
               </button>
@@ -163,22 +203,49 @@ function ColorConfigurator() {
             <h3 className="c-config__color-name">{product.name}</h3>
             <p className="c-config__desc">{product.description}</p>
             <div className="c-config__buy-row">
-              <span className="c-config__price">€39</span>
-              <a href={cartUrl(product.variantId)}
-                 className="btn btn--accent"
-                 style={{ background: product.accent, color: product.name === "Sunflower" ? "#111" : "#fff" }}>
-                Buy Now
-              </a>
+              <span className="c-config__price">{PRICE}</span>
+              {product.soldOut ? (
+                <span className="btn btn--soldout" aria-disabled="true">Sold out</span>
+              ) : (
+                <a href={cartUrl(product.variantId)}
+                   className="btn btn--accent"
+                   style={{ background: product.accent, color: product.name === "Sunflower" ? "#111" : "#fff" }}>
+                  Buy Now
+                </a>
+              )}
             </div>
+            <p className="c-config__support">
+              Questions? <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+            </p>
           </div>
         </div>
       </div>
       <div className="c-config__display">
-        {PRODUCTS.map((p, i) => (
-          <img key={p.name} src={p.image} alt={p.name}
-               className={`c-config__product-img ${i === sel ? "active" : ""}`}
-               loading="lazy" />
-        ))}
+        <div className="c-config__slider"
+             onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          {images.map((img, i) => (
+            <img key={img.src} src={img.src} alt={img.alt}
+                 width={img.w} height={img.h}
+                 className={`c-config__product-img ${i === slide ? "active" : ""}`}
+                 loading="lazy" />
+          ))}
+          {images.length > 1 && (
+            <>
+              <button className="c-config__arrow c-config__arrow--prev"
+                      onClick={() => go(-1)} aria-label="Previous image">‹</button>
+              <button className="c-config__arrow c-config__arrow--next"
+                      onClick={() => go(1)} aria-label="Next image">›</button>
+              <div className="c-config__dots">
+                {images.map((_, i) => (
+                  <button key={i}
+                          className={`c-config__dot ${i === slide ? "active" : ""}`}
+                          onClick={() => setSlide(i)}
+                          aria-label={`Image ${i + 1}`} />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -195,7 +262,8 @@ function DetailsSection() {
   return (
     <section className="c-details" id="details">
       <div className="c-details__image">
-        <img src="/media/pink-spiral.png" alt="Rosé Coilo bookshelf" loading="lazy" />
+        <img src={`${A}/colors/rose/rose-1.webp`} alt="Coilo Spiral Bookshelf in Rosé in a soft interior"
+             width={2000} height={1493} loading="lazy" />
       </div>
       <div className="c-details__copy">
         <RevealWrap>
@@ -221,20 +289,45 @@ function DetailsSection() {
   );
 }
 
-// ── EtsyBanner ────────────────────────────────────────
-function EtsyBanner() {
+// ── MotionSection: ad video ───────────────────────────
+function MotionSection() {
   return (
-    <section className="c-etsy">
-      <RevealWrap className="c-etsy__inner">
-        <div className="c-etsy__text">
-          <h3>Also available on Etsy</h3>
-          <p>Support a small business. Secure checkout. 30-day returns.</p>
-        </div>
-        <a href={ETSY_URL} target="_blank" rel="noopener" className="btn btn--etsy">
-          Visit our Etsy Shop
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
+    <section className="c-motion" data-nav-theme="dark">
+      <RevealWrap className="c-motion__head">
+        <p className="c-motion__eyebrow">See it in motion</p>
+        <h2>One continuous line, in every room.</h2>
       </RevealWrap>
+      <RevealWrap className="c-motion__frame" delay={120}>
+        <video
+          className="c-motion__video"
+          src={`${A}/video/ad-video.mp4`}
+          poster={`${A}/video/ad-video-poster.jpg`}
+          muted autoPlay loop playsInline preload="metadata"
+          aria-label="Coilo Spiral Bookshelf product film"
+        />
+      </RevealWrap>
+    </section>
+  );
+}
+
+// ── Reviews ───────────────────────────────────────────
+function Reviews() {
+  return (
+    <section className="c-reviews" id="reviews" data-nav-theme="light">
+      <RevealWrap className="c-reviews__head">
+        <p className="c-reviews__eyebrow">Reviews</p>
+        <h2>Loved on shelves worldwide.</h2>
+        <p className="c-reviews__caption">5.0 ★ · verified Etsy buyers</p>
+      </RevealWrap>
+      <div className="c-reviews__grid">
+        {REVIEWS.map((r, i) => (
+          <RevealWrap key={r.name} className="c-reviews__card" delay={i * 100}>
+            <div className="c-reviews__stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p className="c-reviews__text">“{r.text}”</p>
+            <p className="c-reviews__by"><strong>{r.name}</strong> · {r.meta}</p>
+          </RevealWrap>
+        ))}
+      </div>
     </section>
   );
 }
@@ -248,16 +341,19 @@ function FooterCTA() {
         <h2>Bring the spiral<br />to your shelf.</h2>
         <p>Order the Modern Spiral Bookshelf and choose the finish that fits your space.</p>
         <div className="c-footer__actions">
-          <a href={cartUrl(PRODUCTS[0].variantId)} className="btn btn--primary">Shop Now</a>
-          <a href="#configurator" className="btn btn--outline btn--dark">Pick a Color</a>
+          <a href="#configurator" className="btn btn--primary">Pick a Color</a>
+          <a href={cartUrl(PRODUCTS[0].variantId)} className="btn btn--outline btn--dark">Shop Now</a>
         </div>
+        <a href={ETSY_URL} target="_blank" rel="noopener" className="c-footer__trust">
+          Trusted by buyers on Etsy · ★★★★★
+        </a>
       </RevealWrap>
       <footer className="c-footer__bar">
-        <span>© 2026 Coilo</span>
+        <span>© 2026 Coilo · <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a></span>
         <div className="c-footer__links">
           <a href="/colors">Colors</a>
-          <a href="/about">How It's Made</a>
-          <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
+          <a href="/about">How It&apos;s Made</a>
+          <a href="#reviews">Reviews</a>
         </div>
       </footer>
     </section>
@@ -271,10 +367,10 @@ export default function Home() {
       <SiteNav />
       <div id="top"><SpiralHero /></div>
       <IntroStrip />
-      {/* <ProductGallery /> — hidden for now */}
       <ColorConfigurator />
       <DetailsSection />
-      <EtsyBanner />
+      <MotionSection />
+      <Reviews />
       <FooterCTA />
     </div>
   );
