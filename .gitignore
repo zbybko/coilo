@@ -46,3 +46,8 @@ next-env.d.ts
 
 # heavy Blender render frames (web uses public/media/spiral)
 render/
+
+# local agent / skill tooling (not project source)
+.agents/
+.claude/skills/
+skills-lock.json
