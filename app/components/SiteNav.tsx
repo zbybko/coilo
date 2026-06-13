@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 
-const ETSY_URL = "https://www.etsy.com/shop/Coilo";
-
 // relative luminance from a computed "rgb(a)" string
 function bgLuminance(c: string): number {
   const m = c.match(/rgba?\(([^)]+)\)/);
@@ -72,9 +70,8 @@ export default function SiteNav({ active }: { active?: "colors" | "about" }) {
       <div className={`c-nav__links ${menuOpen ? "open" : ""}`}>
         <a href="/colors" className={active === "colors" ? "active" : ""} onClick={() => setMenu(false)}>Colors</a>
         <a href="/about" className={active === "about" ? "active" : ""} onClick={() => setMenu(false)}>How It&apos;s Made</a>
-        <a href={ETSY_URL} target="_blank" rel="noopener" className="c-nav__cta" onClick={() => setMenu(false)}>
-          Shop on Etsy
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7" /><path d="M7 7h10v10" /></svg>
+        <a href="/#configurator" className="c-nav__cta" onClick={() => setMenu(false)}>
+          Pick a Color
         </a>
       </div>
       <button className={`c-nav__burger ${menuOpen ? "open" : ""}`} onClick={() => setMenu(!menuOpen)} aria-label="Menu">

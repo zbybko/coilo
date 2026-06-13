@@ -120,6 +120,17 @@ export default function AboutPage() {
           letter-spacing:.1em; color:rgba(17,17,17,.35); margin-bottom:6px; }
         .step__detail-value { font-size:15px; font-weight:600; line-height:1.5; }
 
+        .timelapse { padding:0 clamp(20px,5vw,72px) clamp(56px,8vw,96px); background:#fff; }
+        .timelapse__inner { max-width:1080px; margin:0 auto; }
+        .timelapse__eyebrow { font-size:11px; font-weight:700; text-transform:uppercase;
+          letter-spacing:.15em; color:rgba(17,17,17,.4); margin-bottom:16px; text-align:center; }
+        .timelapse__frame { position:relative; border-radius:18px; overflow:hidden;
+          aspect-ratio:16/9; background:linear-gradient(135deg,#1a1a1a,#0a0a0a);
+          display:flex; align-items:center; justify-content:center;
+          border:1px solid rgba(17,17,17,.08); }
+        .timelapse__placeholder { font-size:13px; font-weight:600; letter-spacing:.04em;
+          color:rgba(248,245,238,.4); }
+
         .materials { display:grid; grid-template-columns:1fr; }
         .materials__image { position:relative; overflow:hidden; }
         .materials__image img { width:100%; height:100%; object-fit:cover; display:block; }
@@ -221,6 +232,17 @@ export default function AboutPage() {
             </Rv>
           ))}
         </div>
+      </section>
+
+      {/* Print time-lapse — reserved container; swap the placeholder for a
+          <video src="/media/site-assets/video/print-timelapse.mp4" ...> once provided */}
+      <section className="timelapse">
+        <Rv className="timelapse__inner">
+          <p className="timelapse__eyebrow">Printed, not manufactured</p>
+          <div className="timelapse__frame" aria-label="Print time-lapse coming soon">
+            <span className="timelapse__placeholder">Print time-lapse — coming soon</span>
+          </div>
+        </Rv>
       </section>
 
       {/* Materials */}

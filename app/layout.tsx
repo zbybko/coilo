@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     title: "Coilo | Modern Spiral Bookshelf",
     description:
       "A sculptural 3D printed spiral bookshelf and magazine holder by Coilo.",
-    images: ["/media/cyan.png"],
+    images: ["/media/site-assets/hero/hero-cyan.webp"],
   },
   icons: {
     icon: "/favicon.svg",

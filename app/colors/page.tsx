@@ -6,25 +6,27 @@ import SiteNav from "../components/SiteNav";
 const SHOPIFY_STORE = "coilo.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 
+const A = "/media/site-assets";
+
 const PRODUCTS = [
   { slug: "cyan", num: "01 / 05", tone: "Electric blue", name: "Cyan",
-    image: "/media/cyan.png", accent: "#08a6ff",
+    image: `${A}/colors/cyan/cyan-studio.webp`, accent: "#1BA6DF",
     desc: "A saturated blue built for desks, gaming shelves, and crisp studio spaces. Cyan catches the eye without clashing with neutral interiors.",
     variantId: "61987185787210" },
   { slug: "sakura", num: "02 / 05", tone: "Soft pink", name: "Sakura",
-    image: "/media/sakura.webp", accent: "#ff7da6",
+    image: `${A}/colors/sakura/sakura-studio.webp`, accent: "#F2A3BE", soldOut: true,
     desc: "A bright floral pink that turns favorite books into a soft display moment. Perfect for bedroom shelves and warm reading nooks.",
     variantId: "62010088554826" },
   { slug: "cherry", num: "03 / 05", tone: "Deep red", name: "Cherry",
-    image: "/media/cherry.png", accent: "#b80f2d",
+    image: `${A}/colors/cherry/cherry-studio.webp`, accent: "#C0303A",
     desc: "A richer red for bold shelves, editorial stacks, and warmer interiors. Cherry makes the spiral feel like a statement object.",
     variantId: "62010088587594" },
   { slug: "sunflower", num: "04 / 05", tone: "Warm yellow", name: "Sunflower",
-    image: "/media/sunflower.png", accent: "#f2b600",
+    image: `${A}/colors/sunflower/sunflower-studio.webp`, accent: "#F2A900",
     desc: "A sunny yellow that makes the spiral feel like a sculptural accent piece. Sunflower brightens any shelf and pairs well with wood tones.",
     variantId: "62010088620362" },
   { slug: "rose", num: "05 / 05", tone: "Soft pink", name: "Rosé",
-    image: "/media/pink-spiral.png", accent: "#f4a0b5",
+    image: `${A}/colors/rose/rose-studio.webp`, accent: "#F0457A",
     desc: "A delicate rose tone that brings warmth and softness to any shelf or desk. Rosé is the quiet one — and often the first to sell out.",
     variantId: "62010091077962" },
 ];
@@ -137,6 +139,9 @@ export default function ColorsPage() {
         .spec__val { font-size: 16px; font-weight: 700; }
         .panel__buy { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
         .panel__price { font-size: 32px; font-weight: 700; }
+        .btn-buy--soldout { background: rgba(255,255,255,.08); color: rgba(248,245,238,0.55);
+          border: 1.5px solid rgba(255,255,255,.16); cursor: not-allowed; }
+        .btn-buy--soldout:hover { transform: none; filter: none; }
         .btn-buy { display: inline-flex; align-items: center; gap: 8px; padding: 0 28px; height: 52px;
           border-radius: 999px; font-size: 14px; font-weight: 700; letter-spacing: .02em;
           transition: transform .2s, filter .2s; white-space: nowrap; text-decoration: none; color: #fff; }
@@ -195,7 +200,7 @@ export default function ColorsPage() {
             >
               <div className="panel__media">
                 <div className="panel__glow" style={{ background: p.accent }} />
-                <img src={p.image} alt={`${p.name} Coilo`} className="panel__img" loading={i > 0 ? "lazy" : undefined} />
+                <img src={p.image} alt={`Coilo Spiral Bookshelf in ${p.name}`} className="panel__img" loading={i > 0 ? "lazy" : undefined} />
               </div>
               <div className="panel__content">
                 <p className="panel__num">{p.num}</p>
@@ -211,12 +216,16 @@ export default function ColorsPage() {
                   ))}
                 </div>
                 <div className="panel__buy">
-                  <span className="panel__price">€39</span>
-                  <a href={cartUrl(p.variantId)} className="btn-buy"
-                     style={{ background: p.accent }}>
-                    Buy Now
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-                  </a>
+                  <span className="panel__price">€59</span>
+                  {p.soldOut ? (
+                    <span className="btn-buy btn-buy--soldout" aria-disabled="true">Sold out</span>
+                  ) : (
+                    <a href={cartUrl(p.variantId)} className="btn-buy"
+                       style={{ background: p.accent }}>
+                      Buy Now
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                    </a>
+                  )}
                 </div>
               </div>
             </section>
