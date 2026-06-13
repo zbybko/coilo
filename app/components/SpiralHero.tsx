@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, CSSProperties } from "react";
 
 // stop on the dark tunnel-exit (frames 253-280 brighten to cream — unused so the
 // hero hands off into the dark site below)
@@ -16,16 +16,45 @@ type Act = {
   title: string;
   sub: string;
   brand?: boolean;
-  dark?: boolean; // dark text over the light room frames
+  dark?: boolean;   // dark text over the light room frames
+  spiral?: boolean; // headings track the spiral's current colour
 };
 
 // progress ranges (0..1) mapped to the 280-frame journey
 const ACTS: Act[] = [
   { from: 0.0, to: 0.14, kicker: "3D-printed design object", title: "Coilo", sub: "Where design unwinds.", brand: true, dark: true },
-  { from: 0.24, to: 0.36, title: "One continuous line", sub: "A single sweeping coil holds your books upright — structure becomes ornament." },
-  { from: 0.46, to: 0.58, title: "Printed, not manufactured", sub: "Premium PLA, precision FDM, finished by hand. Made in Germany." },
-  { from: 0.68, to: 0.8, title: "Five finishes. One icon.", sub: "Cyan · Sakura · Cherry · Sunflower · Rosé" },
+  { from: 0.24, to: 0.36, title: "One continuous line", sub: "A single sweeping coil holds your books upright — structure becomes ornament.", spiral: true },
+  { from: 0.46, to: 0.58, title: "Printed, not manufactured", sub: "Premium PLA, precision FDM, finished by hand. Made in Germany.", spiral: true },
+  { from: 0.68, to: 0.8, title: "Five finishes. One icon.", sub: "Cyan · Sakura · Cherry · Sunflower · Rosé", spiral: true },
 ];
+
+// the tunnel's ring colour at each point of the journey (bright finish accents,
+// readable on the dark navy interior). Drives --spiral-color so the headings
+// shift in sync with the render as you scroll.
+const SPIRAL_STOPS: [number, [number, number, number]][] = [
+  [0.18, [0x1b, 0xa6, 0xdf]], // Cyan
+  [0.30, [0x1b, 0xa6, 0xdf]],
+  [0.52, [0xf0, 0x45, 0x7a]], // Rosé / Cherry tunnel
+  [0.74, [0xf2, 0xa9, 0x00]], // Sunflower
+  [0.86, [0xf2, 0xa9, 0x00]],
+];
+
+function spiralColorAt(p: number): string {
+  const s = SPIRAL_STOPS;
+  if (p <= s[0][0]) return `rgb(${s[0][1].join(",")})`;
+  if (p >= s[s.length - 1][0]) return `rgb(${s[s.length - 1][1].join(",")})`;
+  for (let i = 0; i < s.length - 1; i++) {
+    const [p0, c0] = s[i], [p1, c1] = s[i + 1];
+    if (p >= p0 && p <= p1) {
+      const t = (p - p0) / (p1 - p0);
+      const r = Math.round(c0[0] + (c1[0] - c0[0]) * t);
+      const g = Math.round(c0[1] + (c1[1] - c0[1]) * t);
+      const b = Math.round(c0[2] + (c1[2] - c0[2]) * t);
+      return `rgb(${r},${g},${b})`;
+    }
+  }
+  return `rgb(${s[0][1].join(",")})`;
+}
 
 function actOpacity(p: number, a: Act) {
   const fade = 0.03;
@@ -188,7 +217,7 @@ export default function SpiralHero() {
 
   return (
     <div ref={wrapRef} className="sh-track" style={{ height: `${SCROLL_VH}vh` }}>
-      <div className="sh-sticky">
+      <div className="sh-sticky" style={{ "--spiral-color": spiralColorAt(progress) } as CSSProperties}>
         <canvas ref={canvasRef} className="sh-canvas" />
 
         {/* loading veil */}
@@ -204,7 +233,7 @@ export default function SpiralHero() {
           return (
             <div
               key={i}
-              className={a.dark ? "sh-act sh-act--dark" : "sh-act"}
+              className={`sh-act${a.dark ? " sh-act--dark" : ""}${a.spiral ? " sh-act--spiral" : ""}`}
               style={{
                 opacity: o,
                 transform: `translate(-50%, calc(-50% + ${(1 - o) * 14}px))`,
@@ -258,6 +287,9 @@ function StyleTag() {
       .sh-act--dark .sh-kicker, .sh-act--dark .sh-brand, .sh-act--dark .sh-sub {
         text-shadow:0 2px 24px rgba(255,255,255,.55); }
       .sh-act--dark { color:#2a2118; }
+      /* headings track the spiral's current colour (--spiral-color, set on .sh-sticky) */
+      .sh-act--spiral .sh-title, .sh-act--spiral .sh-kicker {
+        color: var(--spiral-color, #fff); transition: color .4s ease; }
       .sh-overlay .sh-cta { background:#2a2118; color:#f6efe6; }
       .sh-kicker { font-family: var(--font-space, system-ui); text-transform:uppercase;
         letter-spacing:.28em; font-size:.72rem; font-weight:500; opacity:.8; margin:0 0 1rem;
