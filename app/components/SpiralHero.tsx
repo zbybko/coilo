@@ -16,11 +16,12 @@ type Act = {
   title: string;
   sub: string;
   brand?: boolean;
+  dark?: boolean; // dark text over the light room frames
 };
 
 // progress ranges (0..1) mapped to the 280-frame journey
 const ACTS: Act[] = [
-  { from: 0.0, to: 0.14, kicker: "3D-printed design object", title: "Coilo", sub: "Where design unwinds.", brand: true },
+  { from: 0.0, to: 0.14, kicker: "3D-printed design object", title: "Coilo", sub: "Where design unwinds.", brand: true, dark: true },
   { from: 0.24, to: 0.36, title: "One continuous line", sub: "A single sweeping coil holds your books upright — structure becomes ornament." },
   { from: 0.46, to: 0.58, title: "Printed, not manufactured", sub: "Premium PLA, precision FDM, finished by hand. Made in Germany." },
   { from: 0.68, to: 0.8, title: "Five finishes. One icon.", sub: "Cyan · Sakura · Cherry · Sunflower · Rosé" },
@@ -203,7 +204,7 @@ export default function SpiralHero() {
           return (
             <div
               key={i}
-              className="sh-act"
+              className={a.dark ? "sh-act sh-act--dark" : "sh-act"}
               style={{
                 opacity: o,
                 transform: `translate(-50%, calc(-50% + ${(1 - o) * 14}px))`,
@@ -228,7 +229,7 @@ export default function SpiralHero() {
         </div>
 
         {/* scroll hint (fades after start) */}
-        <div className="sh-hint" style={{ opacity: progress < 0.04 ? 1 : 0 }}>
+        <div className="sh-hint sh-hint--dark" style={{ opacity: progress < 0.04 ? 1 : 0 }}>
           <span>Scroll to unwind</span>
           <div className="sh-hint__line" />
         </div>
@@ -251,8 +252,13 @@ function StyleTag() {
       .sh-act { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
         width:min(720px,86vw); text-align:center; color:#fff; z-index:3;
         transition: opacity .25s ease; will-change:opacity,transform; }
-      .sh-overlay { position:relative; z-index:3; text-align:center; color:#fff;
+      .sh-overlay { position:relative; z-index:3; text-align:center; color:#2a2118;
         width:min(720px,86vw); }
+      .sh-overlay .sh-kicker, .sh-overlay .sh-brand, .sh-overlay .sh-sub,
+      .sh-act--dark .sh-kicker, .sh-act--dark .sh-brand, .sh-act--dark .sh-sub {
+        text-shadow:0 2px 24px rgba(255,255,255,.55); }
+      .sh-act--dark { color:#2a2118; }
+      .sh-overlay .sh-cta { background:#2a2118; color:#f6efe6; }
       .sh-kicker { font-family: var(--font-space, system-ui); text-transform:uppercase;
         letter-spacing:.28em; font-size:.72rem; font-weight:500; opacity:.8; margin:0 0 1rem;
         text-shadow:0 2px 20px rgba(0,0,0,.5); }
@@ -282,6 +288,8 @@ function StyleTag() {
       .sh-hint__line { width:1px; height:40px; background:linear-gradient(#fff,transparent);
         animation: sh-pulse 1.8s ease-in-out infinite; }
       @keyframes sh-pulse { 0%,100%{opacity:.3;transform:scaleY(.6)} 50%{opacity:1;transform:scaleY(1)} }
+      .sh-hint--dark { color:#2a2118; }
+      .sh-hint--dark .sh-hint__line { background:linear-gradient(#2a2118,transparent); }
 
       .sh-loader { position:absolute; inset:0; z-index:4; display:flex; align-items:center;
         justify-content:center; color:#cfd6e2; background:#05060c;

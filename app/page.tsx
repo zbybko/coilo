@@ -141,31 +141,35 @@ function ColorConfigurator() {
     <section className="c-config" id="configurator"
              style={{ "--config-accent": product.accent } as CSSProperties}>
       <div className="c-config__content">
-        <RevealWrap>
-          <p className="c-config__eyebrow">Color Configurator</p>
-          <h2 className="c-config__title">Find your color.</h2>
-        </RevealWrap>
-        <div className="c-config__swatches">
-          {PRODUCTS.map((p, i) => (
-            <button key={p.name}
-                    className={`c-config__swatch ${i === sel ? "active" : ""}`}
-                    onClick={() => setSel(i)} aria-label={p.name}>
-              <span className="c-config__swatch-dot" style={{ background: p.accent }} />
-              <span className="c-config__swatch-name">{p.name}</span>
-            </button>
-          ))}
+        <div className="c-config__header">
+          <RevealWrap>
+            <p className="c-config__eyebrow">Color Configurator</p>
+            <h2 className="c-config__title">Find your color.</h2>
+          </RevealWrap>
         </div>
-        <div className="c-config__info">
-          <span className="c-config__tone" style={{ color: product.accent }}>{product.tone}</span>
-          <h3 className="c-config__color-name">{product.name}</h3>
-          <p className="c-config__desc">{product.description}</p>
-          <div className="c-config__buy-row">
-            <span className="c-config__price">€39</span>
-            <a href={cartUrl(product.variantId)}
-               className="btn btn--accent"
-               style={{ background: product.accent, color: product.name === "Sunflower" ? "#111" : "#fff" }}>
-              Buy Now
-            </a>
+        <div className="c-config__picker">
+          <div className="c-config__swatches">
+            {PRODUCTS.map((p, i) => (
+              <button key={p.name}
+                      className={`c-config__swatch ${i === sel ? "active" : ""}`}
+                      onClick={() => setSel(i)} aria-label={p.name}>
+                <span className="c-config__swatch-dot" style={{ background: p.accent }} />
+                <span className="c-config__swatch-name">{p.name}</span>
+              </button>
+            ))}
+          </div>
+          <div className="c-config__info">
+            <span className="c-config__tone" style={{ color: product.accent }}>{product.tone}</span>
+            <h3 className="c-config__color-name">{product.name}</h3>
+            <p className="c-config__desc">{product.description}</p>
+            <div className="c-config__buy-row">
+              <span className="c-config__price">€39</span>
+              <a href={cartUrl(product.variantId)}
+                 className="btn btn--accent"
+                 style={{ background: product.accent, color: product.name === "Sunflower" ? "#111" : "#fff" }}>
+                Buy Now
+              </a>
+            </div>
           </div>
         </div>
       </div>
