@@ -19,46 +19,54 @@ function bgLuminance(c: string): number {
 // Text/icon colour flips dark/light based on the background sitting under it.
 export default function SiteNav({ active }: { active?: "colors" | "about" }) {
   const [menuOpen, setMenu] = useState(false);
-  const [onLight, setOnLight] = useState(false);
+  const [onLight, setOnLight] = useState(!active); // home opens on the cream hero; sub-pages open dark
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
-    let raf = 0;
+    const PROBE_Y = 30;
     const probe = () => {
-      raf = 0;
-      const x = Math.round(window.innerWidth / 2);
-      const y = 26;
-      const prevPE = nav.style.pointerEvents;
-      nav.style.pointerEvents = "none"; // let elementFromPoint see behind the nav
-      const node = document.elementFromPoint(x, y) as HTMLElement | null;
-      nav.style.pointerEvents = prevPE;
-      // 1) explicit tag wins (for gradient/image backgrounds we can't read)
-      const themed = node?.closest?.("[data-nav-theme]") as HTMLElement | null;
-      if (themed) { setOnLight(themed.getAttribute("data-nav-theme") === "light"); return; }
-      // 2) fallback: nearest opaque background-colour luminance
-      let n: HTMLElement | null = node;
-      let bg = "";
-      while (n) {
-        const c = getComputedStyle(n).backgroundColor;
-        if (c && c !== "transparent" && !/,\s*0\)\s*$/.test(c)) { bg = c; break; }
-        n = n.parentElement;
+      // 1) deterministic: which tagged section sits under the nav line?
+      const tagged = document.querySelectorAll("[data-nav-theme]");
+      for (const el of Array.from(tagged)) {
+        const r = el.getBoundingClientRect();
+        if (r.top <= PROBE_Y && r.bottom > PROBE_Y) {
+          setOnLight(el.getAttribute("data-nav-theme") === "light");
+          return;
+        }
       }
-      setOnLight(bg ? bgLuminance(bg) > 0.55 : false);
+      // 2) hero canvas: sample the actual rendered pixel (cream → colour flythrough)
+      const canvas = document.querySelector(".sh-canvas") as HTMLCanvasElement | null;
+      if (canvas) {
+        const r = canvas.getBoundingClientRect();
+        if (r.top <= PROBE_Y && r.bottom > PROBE_Y) {
+          try {
+            const ctx = canvas.getContext("2d");
+            const sx = canvas.width / canvas.clientWidth;
+            const x = Math.round((window.innerWidth / 2) * sx);
+            const p = ctx!.getImageData(x, Math.round(PROBE_Y * sx), 1, 1).data;
+            setOnLight(p[3] < 20 ? true : bgLuminance(`rgb(${p[0]},${p[1]},${p[2]})`) > 0.5);
+            return;
+          } catch { /* tainted/not-ready canvas */ }
+          setOnLight(true); // cream hero before first frame paints
+          return;
+        }
+      }
+      setOnLight(false);
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(probe); };
+    let scheduled = false;
+    const onScroll = () => { if (scheduled) return; scheduled = true; probe(); scheduled = false; };
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     // a couple of delayed probes so it settles after fonts/layout/canvas paint
     probe();
-    const t1 = setTimeout(probe, 250);
-    const t2 = setTimeout(probe, 1000);
+    const t1 = setTimeout(probe, 300);
+    const t2 = setTimeout(probe, 1200);
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       clearTimeout(t1); clearTimeout(t2);
-      if (raf) cancelAnimationFrame(raf);
     };
   }, []);
 
