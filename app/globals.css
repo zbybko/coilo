@@ -61,7 +61,6 @@ h1,h2,h3,p { margin: 0; }
 .c-nav__logo-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
 .c-nav__links { display: flex; align-items: center; gap: clamp(18px,3vw,36px);
   font-size: 13px; font-weight: 600; color: var(--text-muted); }
-.c-nav__links a { transition: color .2s; }
 .c-nav__links a:hover { color: #fff; }
 .c-nav__cta { display: inline-flex; align-items: center; gap: 6px;
   padding: 8px 18px; border: 1.5px solid rgba(255,255,255,.25); border-radius: 999px;
@@ -73,9 +72,11 @@ h1,h2,h3,p { margin: 0; }
 .c-nav__burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .c-nav__burger.open span:nth-child(2) { opacity: 0; }
 .c-nav__burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-/* adaptive text colour: dark over light backgrounds */
-.c-nav__brand, .c-nav__links a, .c-nav__cta, .c-nav__burger span {
-  transition: color .3s ease, border-color .3s ease, background-color .3s ease; }
+/* adaptive text colour: dark over light backgrounds.
+   NB: no transition on nav text `color` — an in-flight colour transition can
+   leave links stuck mid-value (renders them invisible). Only animate borders. */
+.c-nav__cta, .c-nav__burger span {
+  transition: border-color .3s ease, background-color .3s ease; }
 .c-nav--light .c-nav__brand,
 .c-nav--light .c-nav__links { color: #15110e; }
 .c-nav--light .c-nav__links a:hover,
@@ -234,13 +235,16 @@ h1,h2,h3,p { margin: 0; }
   transition: color .2s; }
 .c-config__support a:hover { color: var(--config-accent); }
 .c-config__arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 4;
-  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; background: rgba(255,255,255,.14); backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,.22); color: #fff; font-size: 26px; line-height: 1;
+  width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: rgba(255,255,255,.16); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.24); color: #fff;
   cursor: pointer; transition: background .2s, transform .2s; }
-.c-config__arrow:hover { background: rgba(255,255,255,.28); }
-.c-config__arrow--prev { left: clamp(10px,2vw,22px); }
-.c-config__arrow--next { right: clamp(10px,2vw,22px); }
+.c-config__arrow svg { width: 20px; height: 20px; display: block; }
+.c-config__arrow:hover { background: rgba(255,255,255,.3); }
+.c-config__arrow--prev { left: clamp(10px,2vw,24px); }
+.c-config__arrow--prev:hover { transform: translateY(-50%) translateX(-2px); }
+.c-config__arrow--next { right: clamp(10px,2vw,24px); }
+.c-config__arrow--next:hover { transform: translateY(-50%) translateX(2px); }
 .c-config__dots { position: absolute; left: 50%; bottom: clamp(14px,2.4vw,28px);
   transform: translateX(-50%); z-index: 4; display: flex; gap: 9px; }
 .c-config__dot { width: 9px; height: 9px; border-radius: 50%; padding: 0; cursor: pointer;

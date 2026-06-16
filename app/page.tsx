@@ -7,6 +7,8 @@ import SiteNav from "./components/SiteNav";
 // ── Data ─────────────────────────────────────────────
 const SHOPIFY_STORE = "coilo.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
+const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
+const PINTEREST_URL = "https://de.pinterest.com/coilostudio/";
 const SUPPORT_EMAIL = "support@coilo.de";
 const A = "/media/site-assets"; // optimized lifestyle/studio assets
 
@@ -22,18 +24,8 @@ type Product = {
   images: ProductImage[]; // lifestyle first, studio after
 };
 
+// Order: Sakura → Cyan → Cherry → Rosé → Sunflower (Sakura featured, sold out).
 const PRODUCTS: Product[] = [
-  {
-    name: "Cyan", tone: "Electric blue", accent: "#1BA6DF", text: "#0A4A63",
-    description: "A saturated blue built for desks, gaming shelves, and crisp studio spaces.",
-    variantId: "61987185787210",
-    images: [
-      { src: `${A}/colors/cyan/cyan-1.webp`, alt: "Coilo Spiral Bookshelf in Cyan on an oak sideboard", w: 2000, h: 1493 },
-      { src: `${A}/colors/cyan/cyan-2.webp`, alt: "Coilo Spiral Bookshelf in Cyan in an ocean-toned interior", w: 2000, h: 1493 },
-      { src: `${A}/colors/cyan/cyan-3.webp`, alt: "Coilo Spiral Bookshelf in Cyan on a gallery shelf", w: 2000, h: 1493 },
-      { src: `${A}/colors/cyan/cyan-studio.webp`, alt: "Coilo Spiral Bookshelf in Cyan, studio shot", w: 1600, h: 2153 },
-    ],
-  },
   {
     name: "Sakura", tone: "Soft pink", accent: "#F2A3BE", text: "#8A3A52",
     description: "A bright floral pink that turns favorite books into a soft display moment.",
@@ -45,14 +37,35 @@ const PRODUCTS: Product[] = [
     ],
   },
   {
+    name: "Cyan", tone: "Electric blue", accent: "#1BA6DF", text: "#0A4A63",
+    description: "A saturated blue built for desks, gaming shelves, and crisp studio spaces.",
+    variantId: "61987185787210",
+    images: [
+      { src: `${A}/colors/cyan/cyan-feature.png`, alt: "Coilo Spiral Bookshelf in Cyan, editorial shot", w: 1083, h: 1452 },
+      { src: `${A}/colors/cyan/cyan-studio.webp`, alt: "Coilo Spiral Bookshelf in Cyan, studio shot", w: 1600, h: 2153 },
+      { src: `${A}/colors/cyan/cyan-1.webp`, alt: "Coilo Spiral Bookshelf in Cyan on an oak sideboard", w: 2000, h: 1493 },
+      { src: `${A}/colors/cyan/cyan-2.webp`, alt: "Coilo Spiral Bookshelf in Cyan in an ocean-toned interior", w: 2000, h: 1493 },
+      { src: `${A}/colors/cyan/cyan-3.webp`, alt: "Coilo Spiral Bookshelf in Cyan on a gallery shelf", w: 2000, h: 1493 },
+    ],
+  },
+  {
     name: "Cherry", tone: "Deep red", accent: "#C0303A", text: "#5E1418",
     description: "A richer red for bold shelves, editorial stacks, and warmer interiors.",
     variantId: "62010088587594",
     images: [
+      { src: `${A}/colors/cherry/cherry-studio.webp`, alt: "Coilo Spiral Bookshelf in Cherry, studio shot", w: 1600, h: 2143 },
       { src: `${A}/colors/cherry/cherry-1.webp`, alt: "Coilo Spiral Bookshelf in Cherry in a warm interior", w: 2000, h: 1493 },
       { src: `${A}/colors/cherry/cherry-2.webp`, alt: "Coilo Spiral Bookshelf in Cherry on a styled shelf", w: 2000, h: 1493 },
-      { src: `${A}/colors/cherry/cherry-studio.webp`, alt: "Coilo Spiral Bookshelf in Cherry, studio shot", w: 1600, h: 2143 },
       { src: `${A}/colors/cherry/cherry-studio-2.webp`, alt: "Coilo Spiral Bookshelf in Cherry, studio detail", w: 1600, h: 2143 },
+    ],
+  },
+  {
+    name: "Rosé", tone: "Soft rose", accent: "#F0457A", text: "#7A1E3C",
+    description: "A delicate rose tone that brings warmth and softness to any shelf or desk.",
+    variantId: "62010091077962",
+    images: [
+      { src: `${A}/colors/rose/rose-studio.webp`, alt: "Coilo Spiral Bookshelf in Rosé, studio shot", w: 1086, h: 1448 },
+      { src: `${A}/colors/rose/rose-1.webp`, alt: "Coilo Spiral Bookshelf in Rosé in a soft interior", w: 2000, h: 1493 },
     ],
   },
   {
@@ -60,17 +73,8 @@ const PRODUCTS: Product[] = [
     description: "A sunny yellow that makes the spiral feel like a sculptural accent piece.",
     variantId: "62010088620362",
     images: [
-      { src: `${A}/colors/sunflower/sunflower-1.webp`, alt: "Coilo Spiral Bookshelf in Sunflower in a bright interior", w: 2000, h: 1493 },
       { src: `${A}/colors/sunflower/sunflower-studio.webp`, alt: "Coilo Spiral Bookshelf in Sunflower, studio shot", w: 1085, h: 1450 },
-    ],
-  },
-  {
-    name: "Rosé", tone: "Soft pink", accent: "#F0457A", text: "#7A1E3C",
-    description: "A delicate rose tone that brings warmth and softness to any shelf or desk.",
-    variantId: "62010091077962",
-    images: [
-      { src: `${A}/colors/rose/rose-1.webp`, alt: "Coilo Spiral Bookshelf in Rosé in a soft interior", w: 2000, h: 1493 },
-      { src: `${A}/colors/rose/rose-studio.webp`, alt: "Coilo Spiral Bookshelf in Rosé, studio shot", w: 1086, h: 1448 },
+      { src: `${A}/colors/sunflower/sunflower-1.webp`, alt: "Coilo Spiral Bookshelf in Sunflower in a bright interior", w: 2000, h: 1493 },
     ],
   },
 ];
@@ -85,6 +89,9 @@ const REVIEWS = [
 function cartUrl(variantId: string) {
   return `https://${SHOPIFY_STORE}/cart/${variantId}:1`;
 }
+
+// first in-stock finish — used for generic "Shop Now" CTAs (Sakura is sold out)
+const FIRST_AVAILABLE = PRODUCTS.find((p) => !p.soldOut) ?? PRODUCTS[0];
 
 // ── Hooks ─────────────────────────────────────────────
 function useScrollReveal(threshold = 0.15) {
@@ -178,7 +185,7 @@ function ColorConfigurator() {
   };
 
   return (
-    <section className="c-config" id="configurator"
+    <section className="c-config" id="configurator" data-nav-theme="dark"
              style={{ "--config-accent": product.accent } as CSSProperties}>
       <div className="c-config__content">
         <div className="c-config__header">
@@ -232,9 +239,13 @@ function ColorConfigurator() {
           {images.length > 1 && (
             <>
               <button className="c-config__arrow c-config__arrow--prev"
-                      onClick={() => go(-1)} aria-label="Previous image">‹</button>
+                      onClick={() => go(-1)} aria-label="Previous image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
+              </button>
               <button className="c-config__arrow c-config__arrow--next"
-                      onClick={() => go(1)} aria-label="Next image">›</button>
+                      onClick={() => go(1)} aria-label="Next image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
+              </button>
               <div className="c-config__dots">
                 {images.map((_, i) => (
                   <button key={i}
@@ -260,7 +271,7 @@ function DetailsSection() {
     { title: "Ships from Germany", desc: "Carefully packed and shipped across Europe. Fast and reliable." },
   ];
   return (
-    <section className="c-details" id="details">
+    <section className="c-details" id="details" data-nav-theme="light">
       <div className="c-details__image">
         <img src={`${A}/colors/rose/rose-1.webp`} alt="Coilo Spiral Bookshelf in Rosé in a soft interior"
              width={2000} height={1493} loading="lazy" />
@@ -342,7 +353,7 @@ function FooterCTA() {
         <p>Order the Modern Spiral Bookshelf and choose the finish that fits your space.</p>
         <div className="c-footer__actions">
           <a href="#configurator" className="btn btn--primary">Pick a Color</a>
-          <a href={cartUrl(PRODUCTS[0].variantId)} className="btn btn--outline btn--dark">Shop Now</a>
+          <a href={cartUrl(FIRST_AVAILABLE.variantId)} className="btn btn--outline btn--dark">Shop Now</a>
         </div>
         <a href={ETSY_URL} target="_blank" rel="noopener" className="c-footer__trust">
           Trusted by buyers on Etsy · ★★★★★
@@ -353,7 +364,9 @@ function FooterCTA() {
         <div className="c-footer__links">
           <a href="/colors">Colors</a>
           <a href="/about">How It&apos;s Made</a>
-          <a href="#reviews">Reviews</a>
+          <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
+          <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
+          <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
         </div>
       </footer>
     </section>
@@ -366,9 +379,9 @@ export default function Home() {
     <div data-theme="chromatic">
       <SiteNav />
       <div id="top"><SpiralHero /></div>
-      <IntroStrip />
       <ColorConfigurator />
       <DetailsSection />
+      <IntroStrip />
       <MotionSection />
       <Reviews />
       <FooterCTA />
