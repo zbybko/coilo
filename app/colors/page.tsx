@@ -5,30 +5,38 @@ import SiteNav from "../components/SiteNav";
 
 const SHOPIFY_STORE = "coilo.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
+const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
+const PINTEREST_URL = "https://de.pinterest.com/coilostudio/";
 
 const A = "/media/site-assets";
 
+// Order: Sakura → Cyan → Cherry → Rosé → Sunflower (matches configurator + side dots)
 const PRODUCTS = [
-  { slug: "cyan", num: "01 / 05", tone: "Electric blue", name: "Cyan",
-    image: `${A}/colors/cyan/cyan-studio.webp`, accent: "#1BA6DF",
-    desc: "A saturated blue built for desks, gaming shelves, and crisp studio spaces. Cyan catches the eye without clashing with neutral interiors.",
-    variantId: "61987185787210" },
-  { slug: "sakura", num: "02 / 05", tone: "Soft pink", name: "Sakura",
-    image: `${A}/colors/sakura/sakura-studio.webp`, accent: "#F2A3BE", soldOut: true,
+  { slug: "sakura", num: "01 / 05", tone: "Soft pink", name: "Sakura",
+    accent: "#F2A3BE", soldOut: true,
+    gallery: [`${A}/colors/sakura/sakura-1.webp`, `${A}/colors/sakura/sakura-studio.webp`, `${A}/colors/sakura/sakura-studio-2.webp`],
     desc: "A bright floral pink that turns favorite books into a soft display moment. Perfect for bedroom shelves and warm reading nooks.",
     variantId: "62010088554826" },
+  { slug: "cyan", num: "02 / 05", tone: "Electric blue", name: "Cyan",
+    accent: "#1BA6DF",
+    gallery: [`${A}/colors/cyan/cyan-feature.png`, `${A}/colors/cyan/cyan-studio.webp`, `${A}/colors/cyan/cyan-1.webp`, `${A}/colors/cyan/cyan-2.webp`, `${A}/colors/cyan/cyan-3.webp`],
+    desc: "A saturated blue built for desks, gaming shelves, and crisp studio spaces. Cyan catches the eye without clashing with neutral interiors.",
+    variantId: "61987185787210" },
   { slug: "cherry", num: "03 / 05", tone: "Deep red", name: "Cherry",
-    image: `${A}/colors/cherry/cherry-studio.webp`, accent: "#C0303A",
+    accent: "#C0303A",
+    gallery: [`${A}/colors/cherry/cherry-studio.webp`, `${A}/colors/cherry/cherry-1.webp`, `${A}/colors/cherry/cherry-2.webp`, `${A}/colors/cherry/cherry-studio-2.webp`],
     desc: "A richer red for bold shelves, editorial stacks, and warmer interiors. Cherry makes the spiral feel like a statement object.",
     variantId: "62010088587594" },
-  { slug: "sunflower", num: "04 / 05", tone: "Warm yellow", name: "Sunflower",
-    image: `${A}/colors/sunflower/sunflower-studio.webp`, accent: "#F2A900",
-    desc: "A sunny yellow that makes the spiral feel like a sculptural accent piece. Sunflower brightens any shelf and pairs well with wood tones.",
-    variantId: "62010088620362" },
-  { slug: "rose", num: "05 / 05", tone: "Soft pink", name: "Rosé",
-    image: `${A}/colors/rose/rose-studio.webp`, accent: "#F0457A",
+  { slug: "rose", num: "04 / 05", tone: "Soft rose", name: "Rosé",
+    accent: "#F0457A",
+    gallery: [`${A}/colors/rose/rose-studio.webp`, `${A}/colors/rose/rose-1.webp`],
     desc: "A delicate rose tone that brings warmth and softness to any shelf or desk. Rosé is the quiet one — and often the first to sell out.",
     variantId: "62010091077962" },
+  { slug: "sunflower", num: "05 / 05", tone: "Warm yellow", name: "Sunflower",
+    accent: "#F2A900",
+    gallery: [`${A}/colors/sunflower/sunflower-studio.webp`, `${A}/colors/sunflower/sunflower-1.webp`],
+    desc: "A sunny yellow that makes the spiral feel like a sculptural accent piece. Sunflower brightens any shelf and pairs well with wood tones.",
+    variantId: "62010088620362" },
 ];
 
 const specs = [
@@ -40,6 +48,73 @@ const specs = [
 
 function cartUrl(variantId: string) {
   return `https://${SHOPIFY_STORE}/cart/${variantId}:1`;
+}
+
+type ColorProduct = (typeof PRODUCTS)[number];
+
+// Full-height colour panel with a manual image slider over that colour's gallery.
+function Panel({ p, first, panelRef }:
+  { p: ColorProduct; first: boolean; panelRef: (el: HTMLElement | null) => void }) {
+  const [gi, setGi] = useState(0);
+  const n = p.gallery.length;
+  const go = (d: number) => setGi((g) => (g + d + n) % n);
+  return (
+    <section className="panel" data-color={p.slug} id={p.slug} ref={panelRef}
+             style={{ paddingTop: first ? "72px" : undefined, "--accent": p.accent } as CSSProperties}>
+      <div className="panel__media">
+        <div className="panel__glow" style={{ background: p.accent }} />
+        <div className="panel__slider">
+          {p.gallery.map((src, gIdx) => (
+            <img key={src} src={src} alt={`Coilo Spiral Bookshelf in ${p.name}`}
+                 className={`panel__img ${gIdx === gi ? "active" : ""}`}
+                 loading={first && gIdx === 0 ? undefined : "lazy"} />
+          ))}
+        </div>
+        {n > 1 && (
+          <>
+            <button className="panel__arrow panel__arrow--prev" onClick={() => go(-1)} aria-label="Previous image">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
+            </button>
+            <button className="panel__arrow panel__arrow--next" onClick={() => go(1)} aria-label="Next image">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
+            </button>
+            <div className="panel__dots">
+              {p.gallery.map((_, gIdx) => (
+                <button key={gIdx} className={`panel__dot ${gIdx === gi ? "active" : ""}`}
+                        style={gIdx === gi ? { background: p.accent } : undefined}
+                        onClick={() => setGi(gIdx)} aria-label={`Image ${gIdx + 1}`} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      <div className="panel__content">
+        <p className="panel__num">{p.num}</p>
+        <p className="panel__tone" style={{ color: p.accent }}>{p.tone}</p>
+        <h2 className="panel__name">{p.name}</h2>
+        <p className="panel__desc">{p.desc}</p>
+        <div className="panel__specs">
+          {specs.map(s => (
+            <div key={s.label} className="spec">
+              <p className="spec__label">{s.label}</p>
+              <p className="spec__val">{s.val}</p>
+            </div>
+          ))}
+        </div>
+        <div className="panel__buy">
+          <span className="panel__price">€59</span>
+          {p.soldOut ? (
+            <span className="btn-buy btn-buy--soldout" aria-disabled="true">Sold out</span>
+          ) : (
+            <a href={cartUrl(p.variantId)} className="btn-buy" style={{ background: p.accent }}>
+              Buy Now
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+          )}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default function ColorsPage() {
@@ -116,11 +191,30 @@ export default function ColorsPage() {
         .panel__media { position: relative; display: flex; align-items: center;
           justify-content: center; overflow: hidden; }
         .panel__glow { position: absolute; width: 400px; height: 400px; border-radius: 50%;
-          opacity: .08; filter: blur(120px); pointer-events: none; top: 30%; left: 40%; }
-        .panel__img { max-width: 75%; max-height: 80vh; object-fit: contain;
-          filter: drop-shadow(0 40px 80px rgba(0,0,0,.35));
-          transition: transform .6s ease; display: block; }
-        .panel:hover .panel__img { transform: scale(1.03) rotate(-1deg); }
+          opacity: .1; filter: blur(120px); pointer-events: none; top: 30%; left: 40%; }
+        .panel__slider { position: relative; width: 100%; height: 100%;
+          display: flex; align-items: center; justify-content: center; }
+        .panel__img { position: absolute; max-width: 78%; max-height: 80vh; object-fit: contain;
+          filter: drop-shadow(0 40px 80px rgba(0,0,0,.4));
+          opacity: 0; transition: opacity .6s ease, transform .6s ease; display: block; }
+        .panel__img.active { opacity: 1; }
+        .panel:hover .panel__img.active { transform: scale(1.03) rotate(-1deg); }
+        .panel__arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 4;
+          width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+          border-radius: 50%; background: rgba(255,255,255,.1); backdrop-filter: blur(6px);
+          border: 1px solid rgba(255,255,255,.18); color: #fff;
+          transition: background .2s, transform .2s; }
+        .panel__arrow svg { width: 20px; height: 20px; display: block; }
+        .panel__arrow:hover { background: rgba(255,255,255,.24); }
+        .panel__arrow--prev { left: clamp(12px,2.5vw,32px); }
+        .panel__arrow--prev:hover { transform: translateY(-50%) translateX(-2px); }
+        .panel__arrow--next { right: clamp(12px,2.5vw,32px); }
+        .panel__arrow--next:hover { transform: translateY(-50%) translateX(2px); }
+        .panel__dots { position: absolute; left: 50%; bottom: clamp(18px,3vw,34px);
+          transform: translateX(-50%); z-index: 4; display: flex; gap: 9px; }
+        .panel__dot { width: 9px; height: 9px; border-radius: 50%; padding: 0; cursor: pointer;
+          background: rgba(255,255,255,.3); border: none; transition: transform .25s, background .25s; }
+        .panel__dot.active { transform: scale(1.25); }
 
         .panel__content { display: flex; flex-direction: column; justify-content: center;
           padding: clamp(48px,7vw,96px); color: #f8f5ee; }
@@ -190,45 +284,8 @@ export default function ColorsPage() {
         {/* Panels */}
         <main>
           {PRODUCTS.map((p, i) => (
-            <section
-              key={p.slug}
-              className="panel"
-              data-color={p.slug}
-              id={p.slug}
-              ref={el => { panelRefs.current[i] = el; }}
-              style={{ paddingTop: i === 0 ? "72px" : undefined, "--accent": p.accent } as CSSProperties}
-            >
-              <div className="panel__media">
-                <div className="panel__glow" style={{ background: p.accent }} />
-                <img src={p.image} alt={`Coilo Spiral Bookshelf in ${p.name}`} className="panel__img" loading={i > 0 ? "lazy" : undefined} />
-              </div>
-              <div className="panel__content">
-                <p className="panel__num">{p.num}</p>
-                <p className="panel__tone" style={{ color: p.accent }}>{p.tone}</p>
-                <h2 className="panel__name">{p.name}</h2>
-                <p className="panel__desc">{p.desc}</p>
-                <div className="panel__specs">
-                  {specs.map(s => (
-                    <div key={s.label} className="spec">
-                      <p className="spec__label">{s.label}</p>
-                      <p className="spec__val">{s.val}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="panel__buy">
-                  <span className="panel__price">€59</span>
-                  {p.soldOut ? (
-                    <span className="btn-buy btn-buy--soldout" aria-disabled="true">Sold out</span>
-                  ) : (
-                    <a href={cartUrl(p.variantId)} className="btn-buy"
-                       style={{ background: p.accent }}>
-                      Buy Now
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-                    </a>
-                  )}
-                </div>
-              </div>
-            </section>
+            <Panel key={p.slug} p={p} first={i === 0}
+                   panelRef={(el) => { panelRefs.current[i] = el; }} />
           ))}
         </main>
 
@@ -238,7 +295,8 @@ export default function ColorsPage() {
           <div className="col-foot__links">
             <a href="/">Home</a>
             <a href="/about">How It&apos;s Made</a>
-            <a href="/colors">Colors</a>
+            <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
+            <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
             <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
           </div>
         </footer>
