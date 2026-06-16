@@ -4,6 +4,8 @@ import { useEffect, useRef, CSSProperties } from "react";
 import SiteNav from "../components/SiteNav";
 
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
+const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
+const PINTEREST_URL = "https://de.pinterest.com/coilostudio/";
 
 const STEPS = [
   { num: "01", title: "Parametric modeling",
@@ -90,8 +92,10 @@ export default function AboutPage() {
         .about-hero h1 { font-family: var(--font-instrument,Georgia,serif);
           font-size: clamp(44px,7vw,100px); font-weight: 400; line-height: .92; margin-bottom: 20px; }
         .about-hero h1 em { font-style: italic;
-          background: linear-gradient(135deg,#08a6ff,#ff7da6);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+          background: linear-gradient(135deg,#1BA6DF,#F0457A);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+          /* extend the painted box below the baseline so the italic "p" descender gets filled */
+          padding-bottom: .18em; margin-bottom: -.18em; }
         .about-hero p { max-width: 580px; margin: 0 auto; color: rgba(248,245,238,0.55);
           font-size: clamp(16px,1.8vw,20px); line-height: 1.65; }
 
@@ -294,6 +298,8 @@ export default function AboutPage() {
           <a href="/">Home</a>
           <a href="/about">How It&apos;s Made</a>
           <a href="/colors">Colors</a>
+          <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
+          <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
           <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
         </div>
       </footer>
