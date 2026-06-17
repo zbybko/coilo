@@ -5,7 +5,7 @@ import SpiralHero from "./components/SpiralHero";
 import SiteNav from "./components/SiteNav";
 
 // ── Data ─────────────────────────────────────────────
-const SHOPIFY_STORE = "coilo.myshopify.com";
+const SHOPIFY_STORE = "rxmidd-ww.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
 const PINTEREST_URL = "https://de.pinterest.com/coilostudio/";
@@ -29,7 +29,7 @@ const PRODUCTS: Product[] = [
   {
     name: "Sakura", tone: "Soft pink", accent: "#F2A3BE", text: "#8A3A52",
     description: "A bright floral pink that turns favorite books into a soft display moment.",
-    variantId: "62010088554826", soldOut: true,
+    variantId: "62010088554826",
     images: [
       { src: `${A}/colors/sakura/sakura-1.webp`, alt: "Coilo Spiral Bookshelf in Sakura in a soft interior", w: 2000, h: 1493 },
       { src: `${A}/colors/sakura/sakura-studio.webp`, alt: "Coilo Spiral Bookshelf in Sakura, studio shot", w: 1600, h: 2143 },

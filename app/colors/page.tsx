@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, CSSProperties } from "react";
 import SiteNav from "../components/SiteNav";
 
-const SHOPIFY_STORE = "coilo.myshopify.com";
+const SHOPIFY_STORE = "rxmidd-ww.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
 const PINTEREST_URL = "https://de.pinterest.com/coilostudio/";
@@ -13,7 +13,7 @@ const A = "/media/site-assets";
 // Order: Sakura → Cyan → Cherry → Rosé → Sunflower (matches configurator + side dots)
 const PRODUCTS = [
   { slug: "sakura", num: "01 / 05", tone: "Soft pink", name: "Sakura",
-    accent: "#F2A3BE", soldOut: true,
+    accent: "#F2A3BE",
     gallery: [`${A}/colors/sakura/sakura-1.webp`, `${A}/colors/sakura/sakura-studio.webp`, `${A}/colors/sakura/sakura-studio-2.webp`],
     desc: "A bright floral pink that turns favorite books into a soft display moment. Perfect for bedroom shelves and warm reading nooks.",
     variantId: "62010088554826" },
@@ -50,7 +50,7 @@ function cartUrl(variantId: string) {
   return `https://${SHOPIFY_STORE}/cart/${variantId}:1`;
 }
 
-type ColorProduct = (typeof PRODUCTS)[number];
+type ColorProduct = (typeof PRODUCTS)[number] & { soldOut?: boolean };
 
 // Full-height colour panel with a manual image slider over that colour's gallery.
 function Panel({ p, first, panelRef }:
