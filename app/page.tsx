@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, CSSProperties } from "react";
 import SpiralHero from "./components/SpiralHero";
 import SiteNav from "./components/SiteNav";
+import { captureClickIds, goToCheckout } from "../lib/click-ids";
 
 // ── Data ─────────────────────────────────────────────
 const SHOPIFY_STORE = "rxmidd-ww.myshopify.com";
@@ -215,6 +216,7 @@ function ColorConfigurator() {
                 <span className="btn btn--soldout" aria-disabled="true">Sold out</span>
               ) : (
                 <a href={cartUrl(product.variantId)}
+                   onClick={(e) => goToCheckout(e, cartUrl(product.variantId))}
                    className="btn btn--accent"
                    style={{ background: product.accent, color: product.name === "Sunflower" ? "#111" : "#fff" }}>
                   Buy Now
@@ -353,7 +355,7 @@ function FooterCTA() {
         <p>Order the Modern Spiral Bookshelf and choose the finish that fits your space.</p>
         <div className="c-footer__actions">
           <a href="#configurator" className="btn btn--primary">Pick a Color</a>
-          <a href={cartUrl(FIRST_AVAILABLE.variantId)} className="btn btn--outline btn--dark">Shop Now</a>
+          <a href={cartUrl(FIRST_AVAILABLE.variantId)} onClick={(e) => goToCheckout(e, cartUrl(FIRST_AVAILABLE.variantId))} className="btn btn--outline btn--dark">Shop Now</a>
         </div>
         <a href={ETSY_URL} target="_blank" rel="noopener" className="c-footer__trust">
           Trusted by buyers on Etsy · ★★★★★
@@ -375,6 +377,9 @@ function FooterCTA() {
 
 // ── App ────────────────────────────────────────────────
 export default function Home() {
+  useEffect(() => {
+    captureClickIds(); // store gclid & co for the checkout hop
+  }, []);
   return (
     <div data-theme="chromatic">
       <SiteNav />

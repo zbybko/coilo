@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, CSSProperties } from "react";
 import SiteNav from "../components/SiteNav";
+import { captureClickIds, goToCheckout } from "../../lib/click-ids";
 
 const SHOPIFY_STORE = "rxmidd-ww.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
@@ -106,7 +107,8 @@ function Panel({ p, first, panelRef }:
           {p.soldOut ? (
             <span className="btn-buy btn-buy--soldout" aria-disabled="true">Sold out</span>
           ) : (
-            <a href={cartUrl(p.variantId)} className="btn-buy" style={{ background: p.accent }}>
+            <a href={cartUrl(p.variantId)} onClick={(e) => goToCheckout(e, cartUrl(p.variantId))}
+               className="btn-buy" style={{ background: p.accent }}>
               Buy Now
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
             </a>
@@ -122,9 +124,14 @@ export default function ColorsPage() {
   const panelRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
-    // Hash navigation
-    if (window.location.hash) {
-      const slug = window.location.hash.slice(1);
+    // Store ad click IDs (gclid etc.) so Buy Now can pass them to checkout
+    captureClickIds();
+
+    // Deep link: /colors#cherry (hash) or /colors?color=cherry (ads-friendly)
+    const queryColor = new URLSearchParams(window.location.search)
+      .get("color")?.trim().toLowerCase();
+    const slug = window.location.hash ? window.location.hash.slice(1) : queryColor;
+    if (slug) {
       const idx = PRODUCTS.findIndex(p => p.slug === slug);
       if (idx >= 0) {
         setTimeout(() => {
