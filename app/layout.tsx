@@ -31,6 +31,10 @@ export const metadata: Metadata = {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
+  verification: {
+    // Google Merchant Center / Search Console domain verification (coilo.de)
+    google: "IhAyGGrcQP4eDDzbK4Uhs3nfPSuIWxgWpxm9hRj1K2s",
+  },
 };
 
 export default function RootLayout({
