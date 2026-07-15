@@ -37,6 +37,28 @@ export const metadata: Metadata = {
   },
 };
 
+// Business identity for Google (matches the Impressum on shop.coilo.de).
+const ORG_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "OnlineStore",
+  name: "Coilo",
+  url: "https://coilo.de",
+  logo: "https://coilo.de/media/coilo-logo.png",
+  email: "support@coilo.de",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Rappenbuckelweg 3",
+    addressLocality: "Schriesheim",
+    postalCode: "69198",
+    addressCountry: "DE",
+  },
+  sameAs: [
+    "https://www.tiktok.com/@coilo.home",
+    "https://de.pinterest.com/coilostudio/",
+    "https://www.etsy.com/shop/Coilo",
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,6 +67,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${instrumentSerif.variable} ${spaceGrotesk.variable}`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSON_LD) }}
+        />
         {children}
       </body>
     </html>
