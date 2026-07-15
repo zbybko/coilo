@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef, CSSProperties } from "react";
 import SpiralHero from "./components/SpiralHero";
 import SiteNav from "./components/SiteNav";
-import { captureClickIds, goToCheckout } from "../lib/click-ids";
+import LegalLinks from "./components/LegalLinks";
+import { captureAttribution, cartUrl, goToCheckout } from "../lib/attribution";
 
 // ── Data ─────────────────────────────────────────────
-const SHOPIFY_STORE = "rxmidd-ww.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
 const PINTEREST_URL = "https://de.pinterest.com/coilostudio/";
@@ -16,6 +16,7 @@ const A = "/media/site-assets"; // optimized lifestyle/studio assets
 type ProductImage = { src: string; alt: string; w: number; h: number };
 type Product = {
   name: string;
+  slug: string; // shared colour slug: /colors?color=<slug>, utm_content, c_color
   tone: string;
   accent: string; // bright finish colour (UI accent)
   text: string;   // deep tone for headings on light backgrounds
@@ -28,7 +29,7 @@ type Product = {
 // Order: Sakura → Cyan → Cherry → Rosé → Sunflower (Sakura featured, sold out).
 const PRODUCTS: Product[] = [
   {
-    name: "Sakura", tone: "Soft pink", accent: "#F2A3BE", text: "#8A3A52",
+    name: "Sakura", slug: "sakura", tone: "Soft pink", accent: "#F2A3BE", text: "#8A3A52",
     description: "A bright floral pink that turns favorite books into a soft display moment.",
     variantId: "62010088554826",
     images: [
@@ -38,7 +39,7 @@ const PRODUCTS: Product[] = [
     ],
   },
   {
-    name: "Cyan", tone: "Electric blue", accent: "#1BA6DF", text: "#0A4A63",
+    name: "Cyan", slug: "cyan", tone: "Electric blue", accent: "#1BA6DF", text: "#0A4A63",
     description: "A saturated blue built for desks, gaming shelves, and crisp studio spaces.",
     variantId: "61987185787210",
     images: [
@@ -50,7 +51,7 @@ const PRODUCTS: Product[] = [
     ],
   },
   {
-    name: "Cherry", tone: "Deep red", accent: "#C0303A", text: "#5E1418",
+    name: "Cherry", slug: "cherry", tone: "Deep red", accent: "#C0303A", text: "#5E1418",
     description: "A richer red for bold shelves, editorial stacks, and warmer interiors.",
     variantId: "62010088587594",
     images: [
@@ -61,7 +62,7 @@ const PRODUCTS: Product[] = [
     ],
   },
   {
-    name: "Rosé", tone: "Soft rose", accent: "#F0457A", text: "#7A1E3C",
+    name: "Rosé", slug: "rose", tone: "Soft rose", accent: "#F0457A", text: "#7A1E3C",
     description: "A delicate rose tone that brings warmth and softness to any shelf or desk.",
     variantId: "62010091077962",
     images: [
@@ -70,7 +71,7 @@ const PRODUCTS: Product[] = [
     ],
   },
   {
-    name: "Sunflower", tone: "Warm yellow", accent: "#F2A900", text: "#6E4E00",
+    name: "Sunflower", slug: "sunflower", tone: "Warm yellow", accent: "#F2A900", text: "#6E4E00",
     description: "A sunny yellow that makes the spiral feel like a sculptural accent piece.",
     variantId: "62010088620362",
     images: [
@@ -86,10 +87,6 @@ const REVIEWS = [
   { name: "Larin", meta: "June 2026", text: "Really beautiful product!! I would recommend." },
   { name: "Hayley", meta: "New Zealand · May 2026", text: "Arrived in New Zealand safe and well. I love it!" },
 ];
-
-function cartUrl(variantId: string) {
-  return `https://${SHOPIFY_STORE}/cart/${variantId}:1`;
-}
 
 // first in-stock finish — used for generic "Shop Now" CTAs (Sakura is sold out)
 const FIRST_AVAILABLE = PRODUCTS.find((p) => !p.soldOut) ?? PRODUCTS[0];
@@ -216,7 +213,7 @@ function ColorConfigurator() {
                 <span className="btn btn--soldout" aria-disabled="true">Sold out</span>
               ) : (
                 <a href={cartUrl(product.variantId)}
-                   onClick={(e) => goToCheckout(e, cartUrl(product.variantId))}
+                   onClick={(e) => goToCheckout(e, product.variantId, product.slug, "configurator")}
                    className="btn btn--accent"
                    style={{ background: product.accent, color: product.name === "Sunflower" ? "#111" : "#fff" }}>
                   Buy Now
@@ -355,7 +352,7 @@ function FooterCTA() {
         <p>Order the Modern Spiral Bookshelf and choose the finish that fits your space.</p>
         <div className="c-footer__actions">
           <a href="#configurator" className="btn btn--primary">Pick a Color</a>
-          <a href={cartUrl(FIRST_AVAILABLE.variantId)} onClick={(e) => goToCheckout(e, cartUrl(FIRST_AVAILABLE.variantId))} className="btn btn--outline btn--dark">Shop Now</a>
+          <a href={cartUrl(FIRST_AVAILABLE.variantId)} onClick={(e) => goToCheckout(e, FIRST_AVAILABLE.variantId, FIRST_AVAILABLE.slug, "footer")} className="btn btn--outline btn--dark">Shop Now</a>
         </div>
         <a href={ETSY_URL} target="_blank" rel="noopener" className="c-footer__trust">
           Trusted by buyers on Etsy · ★★★★★
@@ -371,6 +368,10 @@ function FooterCTA() {
           <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
         </div>
       </footer>
+      <footer className="c-footer__bar c-footer__bar--legal">
+        <span>Rechtliches</span>
+        <LegalLinks />
+      </footer>
     </section>
   );
 }
@@ -378,7 +379,7 @@ function FooterCTA() {
 // ── App ────────────────────────────────────────────────
 export default function Home() {
   useEffect(() => {
-    captureClickIds(); // store gclid & co for the checkout hop
+    captureAttribution(); // store utm_*/click IDs for the checkout hop
   }, []);
   return (
     <div data-theme="chromatic">

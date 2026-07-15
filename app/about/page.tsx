@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, CSSProperties } from "react";
 import SiteNav from "../components/SiteNav";
+import LegalLinks from "../components/LegalLinks";
+import { captureAttribution } from "../../lib/attribution";
 
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
@@ -61,6 +63,9 @@ function Rv({ children, className = "", delay = 0, style = {} }:
 }
 
 export default function AboutPage() {
+  useEffect(() => {
+    captureAttribution(); // store utm_*/click IDs for the checkout hop
+  }, []);
   return (
     <>
       <style>{`
@@ -181,8 +186,10 @@ export default function AboutPage() {
         .btn-outline-dark:hover { transform:translateY(-2px); border-color:rgba(17,17,17,.5); }
 
         .about-foot { padding:22px clamp(20px,5vw,72px); border-top:1px solid rgba(255,255,255,.08);
-          display:flex; align-items:center; justify-content:space-between;
+          display:flex; flex-direction:column; gap:14px;
           font-size:13px; color:rgba(248,245,238,0.55); background:#0a0a0a; }
+        .about-foot__row { display:flex; align-items:center; justify-content:space-between;
+          gap:12px; flex-wrap:wrap; }
         .about-foot a { color:inherit; text-decoration:none; transition:color .2s; }
         .about-foot a:hover { color:#fff; }
         .about-foot__links { display:flex; gap:24px; }
@@ -197,7 +204,7 @@ export default function AboutPage() {
           .timeline__grid::before { left: 20px; }
           .step { grid-template-columns: 40px 1fr; }
           .step__num { width: 40px; height: 40px; font-size: 14px; }
-          .about-foot { flex-direction: column; gap: 12px; text-align: center; }
+          .about-foot__row { flex-direction: column; gap: 12px; text-align: center; }
         }
       `}</style>
 
@@ -293,14 +300,20 @@ export default function AboutPage() {
 
       {/* Footer */}
       <footer className="about-foot">
-        <span>© 2026 Coilo</span>
-        <div className="about-foot__links">
-          <a href="/">Home</a>
-          <a href="/about">How It&apos;s Made</a>
-          <a href="/colors">Colors</a>
-          <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
-          <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
-          <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
+        <div className="about-foot__row">
+          <span>© 2026 Coilo</span>
+          <div className="about-foot__links">
+            <a href="/">Home</a>
+            <a href="/about">How It&apos;s Made</a>
+            <a href="/colors">Colors</a>
+            <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
+            <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
+            <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
+          </div>
+        </div>
+        <div className="about-foot__row">
+          <span>Rechtliches</span>
+          <LegalLinks />
         </div>
       </footer>
     </>

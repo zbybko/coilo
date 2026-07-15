@@ -329,6 +329,11 @@ h1,h2,h3,p { margin: 0; }
 .c-footer__links { display: flex; gap: 24px; }
 .c-footer__links a { transition: color .2s; }
 .c-footer__links a:hover { color: var(--ink); }
+.c-footer__bar--legal { margin-top: 0; border-top: 0; padding-top: 0; }
+
+/* ── Legal links (Impressum & policies, on every page) ── */
+.legal-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.legal-links a { color: inherit; transition: color .2s; }
 
 /* ── Chromatic intro ────────────────────────────────── */
 [data-theme="chromatic"] .c-intro {

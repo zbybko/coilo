@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState, CSSProperties } from "react";
 import SiteNav from "../components/SiteNav";
-import { captureClickIds, goToCheckout } from "../../lib/click-ids";
+import LegalLinks from "../components/LegalLinks";
+import { captureAttribution, cartUrl, goToCheckout } from "../../lib/attribution";
 
-const SHOPIFY_STORE = "rxmidd-ww.myshopify.com";
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
 const PINTEREST_URL = "https://de.pinterest.com/coilostudio/";
@@ -46,10 +46,6 @@ const specs = [
   { label: "Dimensions", val: "245×178×192 mm" },
   { label: "Finish", val: "Smooth matte" },
 ];
-
-function cartUrl(variantId: string) {
-  return `https://${SHOPIFY_STORE}/cart/${variantId}:1`;
-}
 
 type ColorProduct = (typeof PRODUCTS)[number] & { soldOut?: boolean };
 
@@ -107,7 +103,7 @@ function Panel({ p, first, panelRef }:
           {p.soldOut ? (
             <span className="btn-buy btn-buy--soldout" aria-disabled="true">Sold out</span>
           ) : (
-            <a href={cartUrl(p.variantId)} onClick={(e) => goToCheckout(e, cartUrl(p.variantId))}
+            <a href={cartUrl(p.variantId)} onClick={(e) => goToCheckout(e, p.variantId, p.slug, "configurator")}
                className="btn-buy" style={{ background: p.accent }}>
               Buy Now
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
@@ -119,26 +115,46 @@ function Panel({ p, first, panelRef }:
   );
 }
 
+// Colour deep-link param on /colors: ?color=<slug> (also /colors#<slug>)
+function colorSlugFromLocation(): string | undefined {
+  const queryColor = new URLSearchParams(window.location.search)
+    .get("color")?.trim().toLowerCase();
+  return window.location.hash ? window.location.hash.slice(1) : queryColor;
+}
+
 export default function ColorsPage() {
   const [activeIdx, setActiveIdx] = useState(0);
   const panelRefs = useRef<(HTMLElement | null)[]>([]);
+  const didMount = useRef(false);
 
   useEffect(() => {
-    // Store ad click IDs (gclid etc.) so Buy Now can pass them to checkout
-    captureClickIds();
+    // Store utm_*/click IDs so Buy Now can pass them to checkout
+    captureAttribution();
 
     // Deep link: /colors#cherry (hash) or /colors?color=cherry (ads-friendly)
-    const queryColor = new URLSearchParams(window.location.search)
-      .get("color")?.trim().toLowerCase();
-    const slug = window.location.hash ? window.location.hash.slice(1) : queryColor;
-    if (slug) {
+    // Instant scrollTo, not smooth scrollIntoView: the page's mandatory scroll
+    // snap cancels programmatic scrollIntoView and the deep link never lands.
+    const scrollToSlug = (slug: string | undefined, delay: number) => {
+      if (!slug) return;
       const idx = PRODUCTS.findIndex(p => p.slug === slug);
       if (idx >= 0) {
+        setActiveIdx(idx);
         setTimeout(() => {
-          panelRefs.current[idx]?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+          const el = panelRefs.current[idx];
+          if (el) {
+            window.scrollTo({
+              top: el.getBoundingClientRect().top + window.scrollY,
+              behavior: "instant",
+            });
+          }
+        }, delay);
       }
-    }
+    };
+    scrollToSlug(colorSlugFromLocation(), 100);
+
+    // Back/forward: re-apply whatever colour the restored URL points at
+    const onPop = () => scrollToSlug(colorSlugFromLocation(), 0);
+    window.addEventListener("popstate", onPop);
 
     // Track active panel via IntersectionObserver
     const obs = new IntersectionObserver((entries) => {
@@ -151,8 +167,19 @@ export default function ColorsPage() {
       });
     }, { threshold: 0.5 });
     panelRefs.current.forEach(p => p && obs.observe(p));
-    return () => obs.disconnect();
+    return () => { obs.disconnect(); window.removeEventListener("popstate", onPop); };
   }, []);
+
+  // Keep the address bar on the visible colour (shareable URLs). replaceState
+  // only touches the color param, so inbound utm_*/click IDs stay in the URL.
+  useEffect(() => {
+    if (!didMount.current) { didMount.current = true; return; }
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("color") === PRODUCTS[activeIdx].slug) return;
+    url.searchParams.set("color", PRODUCTS[activeIdx].slug);
+    url.hash = "";
+    history.replaceState(null, "", url);
+  }, [activeIdx]);
 
   return (
     <>
@@ -250,9 +277,11 @@ export default function ColorsPage() {
         .panel[data-color="sunflower"] .btn-buy { color: #111; }
 
         .col-foot { padding: 22px clamp(20px,5vw,72px); border-top: 1px solid rgba(255,255,255,.08);
-          display: flex; align-items: center; justify-content: space-between;
+          display: flex; flex-direction: column; gap: 14px;
           font-size: 13px; color: rgba(248,245,238,0.55); scroll-snap-align: end;
           background: #0a0a0a; }
+        .col-foot__row { display: flex; align-items: center; justify-content: space-between;
+          gap: 12px; flex-wrap: wrap; }
         .col-foot a { color: inherit; text-decoration: none; transition: color .2s; }
         .col-foot a:hover { color: #fff; }
         .col-foot__links { display: flex; gap: 24px; }
@@ -269,7 +298,7 @@ export default function ColorsPage() {
           .col-nav__links { display: none; }
           .panel__name { font-size: clamp(40px,14vw,72px); }
           .panel__media { min-height: 40svh; }
-          .col-foot { flex-direction: column; gap: 12px; text-align: center; }
+          .col-foot__row { flex-direction: column; gap: 12px; text-align: center; }
         }
       `}</style>
 
@@ -298,13 +327,19 @@ export default function ColorsPage() {
 
         {/* Footer */}
         <footer className="col-foot">
-          <span>© 2026 Coilo</span>
-          <div className="col-foot__links">
-            <a href="/">Home</a>
-            <a href="/about">How It&apos;s Made</a>
-            <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
-            <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
-            <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
+          <div className="col-foot__row">
+            <span>© 2026 Coilo</span>
+            <div className="col-foot__links">
+              <a href="/">Home</a>
+              <a href="/about">How It&apos;s Made</a>
+              <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
+              <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
+              <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
+            </div>
+          </div>
+          <div className="col-foot__row">
+            <span>Rechtliches</span>
+            <LegalLinks />
           </div>
         </footer>
       </div>
