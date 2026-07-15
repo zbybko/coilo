@@ -62,8 +62,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    // renamed from favicon.svg so the CDN edge cache can't serve the old icon
+    icon: "/icon-spiral.svg",
+    shortcut: "/icon-spiral.svg",
     apple: "/apple-touch-icon.png",
   },
   verification: {
