@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://coilo.de/sitemap.xml

@@ -18,18 +18,53 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Coilo | Modern Spiral Bookshelf",
+  metadataBase: new URL("https://coilo.de"),
+  title: {
+    default: "Coilo — Modern Spiral Bookshelf | 3D Printed in Germany",
+    template: "%s | Coilo",
+  },
   description:
-    "A sculptural 3D printed spiral bookshelf and magazine holder by Coilo. Available in 5 vivid colors.",
+    "A sculptural 3D-printed spiral bookshelf and magazine holder in 5 vivid colors. €59, ships from Germany across Europe. One continuous spiral, no assembly.",
+  // Sub-pages override this in their own layout (colors, about).
+  alternates: { canonical: "https://coilo.de/" },
   openGraph: {
-    title: "Coilo | Modern Spiral Bookshelf",
+    type: "website",
+    siteName: "Coilo",
+    url: "https://coilo.de/",
+    title: "Coilo — Modern Spiral Bookshelf",
     description:
-      "A sculptural 3D printed spiral bookshelf and magazine holder by Coilo.",
+      "A sculptural 3D-printed spiral bookshelf in 5 vivid colors. €59, ships from Germany.",
+    locale: "en_DE",
+    images: [
+      {
+        url: "/media/site-assets/hero/hero-cyan.webp",
+        width: 2400,
+        height: 1792,
+        alt: "Coilo Spiral Bookshelf in Cyan",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Coilo — Modern Spiral Bookshelf",
+    description:
+      "A sculptural 3D-printed spiral bookshelf in 5 vivid colors. €59, ships from Germany.",
     images: ["/media/site-assets/hero/hero-cyan.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
   },
   verification: {
     // Google Merchant Center / Search Console domain verification (coilo.de)
