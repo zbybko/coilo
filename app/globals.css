@@ -305,7 +305,10 @@ h1,h2,h3,p { margin: 0; }
 .c-reviews__shell { position: relative; margin-top: clamp(32px,4vw,56px); }
 .c-reviews__track { display: flex; gap: clamp(16px,2vw,24px);
   overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
-  padding: 6px 4px 22px; scrollbar-width: none; }
+  padding: 6px 4px 22px; scrollbar-width: none; cursor: grab; }
+.c-reviews__track.dragging { cursor: grabbing; scroll-snap-type: none;
+  user-select: none; scroll-behavior: auto; }
+.c-reviews__track.dragging .c-reviews__slide { pointer-events: none; }
 .c-reviews__track::-webkit-scrollbar { display: none; }
 .c-reviews__track:focus-visible { outline: 2px solid rgba(17,17,17,.4); outline-offset: 4px; border-radius: 8px; }
 .c-reviews__slide { flex: 0 0 clamp(300px, 42vw, 480px); scroll-snap-align: start;

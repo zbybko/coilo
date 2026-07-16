@@ -102,14 +102,6 @@ const REVIEWS: Review[] = [
     accent: "#1BA6DF",
   },
   {
-    name: "Claudia", country: "DE", date: "2026-06",
-    text: {
-      en: "Very beautiful colour — exactly what I had imagined.",
-      de: "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe.",
-    },
-    accent: "#F0457A",
-  },
-  {
     name: "Hayley", country: "NZ", date: "2026-05",
     text: {
       en: "Was a little nervous about buying this because of the low price… but it has arrived in New Zealand safe and well. I love it!",
@@ -118,6 +110,14 @@ const REVIEWS: Review[] = [
     img: "/media/reviews/review-nz.jpg",
     alt: "Customer photo: Coilo Spiral Bookshelf in Cyan on a pink sideboard",
     accent: "#F2A900",
+  },
+  {
+    name: "Claudia", country: "DE", date: "2026-06",
+    text: {
+      en: "Very beautiful colour — exactly what I had imagined.",
+      de: "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe.",
+    },
+    accent: "#F0457A",
   },
   {
     name: "Larin", country: "NZ", date: "2026-06",
@@ -396,15 +396,42 @@ function Reviews() {
   const step = (dir: number) =>
     slideTo(Math.min(REVIEWS.length - 1, Math.max(0, active + dir)));
 
-  const onTrackScroll = () => {
-    const track = trackRef.current;
-    if (!track) return;
+  const nearestSlide = (track: HTMLDivElement) => {
     let best = 0, bestDist = Infinity;
     ([...track.children] as HTMLElement[]).forEach((s, i) => {
       const d = Math.abs(s.offsetLeft - track.offsetLeft - track.scrollLeft);
       if (d < bestDist) { bestDist = d; best = i; }
     });
-    setActive(best);
+    return best;
+  };
+
+  const onTrackScroll = () => {
+    const track = trackRef.current;
+    if (track) setActive(nearestSlide(track));
+  };
+
+  // Desktop drag-to-scroll (hold left mouse button). Touch keeps native scroll.
+  const drag = useRef({ startX: 0, startLeft: 0, active: false });
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    const track = trackRef.current;
+    if (!track) return;
+    drag.current = { startX: e.clientX, startLeft: track.scrollLeft, active: true };
+    track.classList.add("dragging");
+    track.setPointerCapture(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!drag.current.active) return;
+    const track = trackRef.current;
+    if (track) track.scrollLeft = drag.current.startLeft - (e.clientX - drag.current.startX);
+  };
+  const endDrag = () => {
+    const track = trackRef.current;
+    if (!drag.current.active || !track) return;
+    drag.current.active = false;
+    slideTo(nearestSlide(track));
+    // keep snap disabled until the smooth glide lands, then restore it
+    setTimeout(() => track.classList.remove("dragging"), 400);
   };
 
   return (
@@ -421,6 +448,8 @@ function Reviews() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
         </button>
         <div className="c-reviews__track" ref={trackRef} onScroll={onTrackScroll}
+             onPointerDown={onPointerDown} onPointerMove={onPointerMove}
+             onPointerUp={endDrag} onPointerCancel={endDrag} onPointerLeave={endDrag}
              role="region" aria-label={t.reviews.eyebrow} tabIndex={0}>
           {REVIEWS.map((r, i) => (
             <article key={r.name + r.date}
@@ -428,7 +457,7 @@ function Reviews() {
                      style={{ "--rv-accent": r.accent } as CSSProperties}>
               {r.img && (
                 <img src={r.img} alt={r.alt ?? ""} className="c-reviews__photo"
-                     width={675} height={900} loading="lazy" />
+                     width={675} height={900} loading="lazy" draggable={false} />
               )}
               <div className="c-reviews__body">
                 <span className="c-reviews__quote" aria-hidden="true">“</span>
