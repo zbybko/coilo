@@ -77,9 +77,24 @@ const PRODUCTS: Product[] = [
   },
 ];
 
-const REVIEWS = [
+// Real Etsy reviews (shop 64967232), fetched via Etsy API. All 5 stars.
+// Photos are buyer "appreciation photos" from the reviews themselves.
+type Review = { name?: string; meta: string; text: string; img?: string; alt?: string };
+const REVIEWS: Review[] = [
+  {
+    meta: "July 2026",
+    text: "Love this — makes a quirky addition to anyone’s home.",
+    img: "/media/reviews/review-quirky.jpg",
+    alt: "Customer photo: Coilo Spiral Bookshelf in Cyan holding books on a wooden shelf",
+  },
+  {
+    name: "Hayley", meta: "New Zealand · May 2026",
+    text: "Was a little nervous about buying this because of the low price… but it has arrived in New Zealand safe and well. I love it!",
+    img: "/media/reviews/review-nz.jpg",
+    alt: "Customer photo: Coilo Spiral Bookshelf in Cyan on a pink sideboard",
+  },
+  { meta: "Juni 2026", text: "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe." },
   { name: "Larin", meta: "June 2026", text: "Really beautiful product!! I would recommend." },
-  { name: "Hayley", meta: "New Zealand · May 2026", text: "Arrived in New Zealand safe and well. I love it!" },
 ];
 
 // first in-stock finish — used for generic "Shop Now" CTAs (Sakura is sold out)
@@ -329,10 +344,14 @@ function Reviews() {
       </RevealWrap>
       <div className="c-reviews__grid">
         {REVIEWS.map((r, i) => (
-          <RevealWrap key={r.name} className="c-reviews__card" delay={i * 100}>
+          <RevealWrap key={r.meta + i} className="c-reviews__card" delay={i * 100}>
+            {r.img && (
+              <img src={r.img} alt={r.alt ?? ""} className="c-reviews__photo"
+                   width={675} height={900} loading="lazy" />
+            )}
             <div className="c-reviews__stars" aria-label="5 out of 5 stars">★★★★★</div>
             <p className="c-reviews__text">“{r.text}”</p>
-            <p className="c-reviews__by"><strong>{r.name}</strong> · {r.meta}</p>
+            <p className="c-reviews__by"><strong>{r.name ?? t.reviews.buyer}</strong> · {r.meta}</p>
           </RevealWrap>
         ))}
       </div>

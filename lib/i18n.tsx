@@ -95,6 +95,7 @@ const EN = {
     eyebrow: "Reviews",
     title: "Loved on shelves worldwide.",
     caption: "5.0 ★ · verified Etsy buyers",
+    buyer: "Verified buyer",
   },
   footer: {
     title1: "Bring the spiral",
@@ -252,6 +253,7 @@ const DE: typeof EN = {
     eyebrow: "Bewertungen",
     title: "Geliebt in Regalen weltweit.",
     caption: "5,0 ★ · verifizierte Etsy-Käufer",
+    buyer: "Verifizierter Käufer",
   },
   footer: {
     title1: "Hol dir die Spirale",
