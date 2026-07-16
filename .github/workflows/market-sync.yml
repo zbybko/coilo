@@ -1,0 +1,43 @@
+name: Market sync
+
+# Weekly: re-assert coilo.de deep links on every Merchant Center offer and
+# pull the current feed prices into lib/market.ts (Shopify FX conversion can
+# move the non-pinned currencies). Commits + redeploys only when prices moved.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Write Merchant API key
+        env:
+          GMC_KEY_JSON: ${{ secrets.GMC_KEY }}
+        run: printf '%s' "$GMC_KEY_JSON" > /tmp/gmc-key.json
+
+      - name: Sync links and site prices
+        env:
+          GMC_KEY: /tmp/gmc-key.json
+        run: python3 scripts/gmc-links.py --sync-site
+
+      - name: Commit and redeploy if prices changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! git diff --quiet lib/market.ts; then
+            git config user.name "coilo-bot"
+            git config user.email "support@coilo.de"
+            git add lib/market.ts
+            git commit -m "Auto-sync market prices from Merchant Center feeds"
+            git push
+            gh workflow run deploy.yml --ref main
+          else
+            echo "prices unchanged"
+          fi

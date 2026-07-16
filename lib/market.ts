@@ -21,13 +21,13 @@ export type Market = {
 // the live Merchant Center feeds) or pin manual prices in Shopify Markets.
 export const MARKETS: Record<MarketCode, Market> = {
   eur: { code: "eur", currency: "EUR", amount: 59, display: "€59" },
-  ch: { code: "ch", currency: "CHF", amount: 56, display: "CHF 56" },
+  ch: { code: "ch", currency: "CHF", amount: 55, display: "CHF 55" },
   us: { code: "us", currency: "USD", amount: 69, display: "$69" },
   pl: { code: "pl", currency: "PLN", amount: 261, display: "261 zł" },
   hu: { code: "hu", currency: "HUF", amount: 21700, display: "21 700 Ft" },
   se: { code: "se", currency: "SEK", amount: 664, display: "664 kr" },
   dk: { code: "dk", currency: "DKK", amount: 450, display: "450 kr" },
-  gb: { code: "gb", currency: "GBP", amount: 52, display: "£52" },
+  gb: { code: "gb", currency: "GBP", amount: 49, display: "£49" },
   ro: { code: "ro", currency: "RON", amount: 316, display: "316 lei" },
   cz: { code: "cz", currency: "CZK", amount: 1456, display: "1 456 Kč" },
 };

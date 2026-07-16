@@ -11,8 +11,10 @@ Auth: service-account key at ../.gmc-key.json relative to the repo root
 account and the GCP project must be registered (developerRegistration).
 
 Usage:
-  python3 scripts/gmc-links.py --audit   # report links + feed prices only
-  python3 scripts/gmc-links.py           # audit + fix everything
+  python3 scripts/gmc-links.py --audit      # report links + feed prices only
+  python3 scripts/gmc-links.py              # audit + fix all links
+  python3 scripts/gmc-links.py --sync-site  # also rewrite lib/market.ts
+                                            # from live feed prices
 """
 
 import base64
@@ -49,6 +51,45 @@ CURRENCY_TO_MARKET = {
     "CHF": "ch", "USD": "us", "PLN": "pl", "HUF": "hu",
     "SEK": "se", "DKK": "dk", "GBP": "gb", "RON": "ro", "CZK": "cz",
 }
+
+# display templates for lib/market.ts ({n} = formatted amount)
+DISPLAY = {
+    "EUR": "€{n}", "CHF": "CHF {n}", "USD": "${n}", "GBP": "£{n}",
+    "PLN": "{n} zł", "HUF": "{n} Ft", "SEK": "{n} kr", "DKK": "{n} kr",
+    "RON": "{n} lei", "CZK": "{n} Kč",
+}
+
+
+def fmt_amount(amount: float) -> str:
+    if amount == int(amount):
+        # thousands separated with a narrow space, e.g. 21 700
+        return f"{int(amount):,}".replace(",", " ")
+    return f"{amount:.2f}"
+
+
+def sync_site(currencies: dict) -> bool:
+    """Rewrite amount/display in lib/market.ts from live feed prices."""
+    import re
+    path = os.path.join(os.path.dirname(__file__), "..", "lib", "market.ts")
+    src = open(path).read()
+    changed = False
+    code_by_currency = {"EUR": "eur", **CURRENCY_TO_MARKET}
+    for currency, amount in currencies.items():
+        code = code_by_currency.get(currency)
+        if not code or not amount:
+            continue
+        display = DISPLAY[currency].format(n=fmt_amount(amount))
+        amt = int(amount) if amount == int(amount) else amount
+        new_line = (f'{code}: {{ code: "{code}", currency: "{currency}", '
+                    f'amount: {amt}, display: "{display}" }},')
+        pattern = re.compile(code + r': \{ code: "' + code + r'"[^\n]*\},')
+        if pattern.search(src) and pattern.search(src).group(0) != new_line:
+            src = pattern.sub(new_line, src)
+            changed = True
+            print(f"  site price updated: {code} -> {display}")
+    if changed:
+        open(path, "w").write(src)
+    return changed
 
 
 def b64(data: bytes) -> bytes:
@@ -170,6 +211,11 @@ def main():
     stale = [r for r in rows if r["want"] and r["have"] != r["want"]]
     print("feed prices:", json.dumps(currencies, sort_keys=True))
     print(f"links correct: {len(rows) - len(stale)} / stale: {len(stale)}")
+
+    if "--sync-site" in sys.argv:
+        if not sync_site(currencies):
+            print("site prices already in sync")
+
     if audit_only or not stale:
         return
 
