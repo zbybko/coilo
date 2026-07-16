@@ -96,6 +96,7 @@ const EN = {
     title: "Loved on shelves worldwide.",
     caption: "5.0 ★ · verified Etsy buyers",
     buyer: "Verified buyer",
+    readAll: "Read all reviews on Etsy →",
   },
   footer: {
     title1: "Bring the spiral",
@@ -254,6 +255,7 @@ const DE: typeof EN = {
     title: "Geliebt in Regalen weltweit.",
     caption: "5,0 ★ · verifizierte Etsy-Käufer",
     buyer: "Verifizierter Käufer",
+    readAll: "Alle Bewertungen auf Etsy →",
   },
   footer: {
     title1: "Hol dir die Spirale",

@@ -79,22 +79,54 @@ const PRODUCTS: Product[] = [
 
 // Real Etsy reviews (shop 64967232), fetched via Etsy API. All 5 stars.
 // Photos are buyer "appreciation photos" from the reviews themselves.
-type Review = { name?: string; meta: string; text: string; img?: string; alt?: string };
+// text.de are the translations Etsy shows German visitors.
+// country is an ISO code — localized at render time via Intl.DisplayNames.
+type Review = {
+  name: string;
+  country?: string;
+  date: string; // YYYY-MM
+  text: { en: string; de: string };
+  img?: string;
+  alt?: string;
+  accent: string; // decorative quote-mark tint (brand colours)
+};
 const REVIEWS: Review[] = [
   {
-    name: "Susan", meta: "UK · July 2026",
-    text: "Love this — makes a quirky addition to anyone’s home.",
+    name: "Susan", country: "GB", date: "2026-07",
+    text: {
+      en: "Love this — makes a quirky addition to anyone’s home.",
+      de: "Ich finde es toll — eine originelle Ergänzung für jedes Zuhause.",
+    },
     img: "/media/reviews/review-quirky.jpg",
     alt: "Customer photo: Coilo Spiral Bookshelf in Cyan holding books on a wooden shelf",
+    accent: "#1BA6DF",
   },
   {
-    name: "Hayley", meta: "New Zealand · May 2026",
-    text: "Was a little nervous about buying this because of the low price… but it has arrived in New Zealand safe and well. I love it!",
+    name: "Claudia", country: "DE", date: "2026-06",
+    text: {
+      en: "Very beautiful colour — exactly what I had imagined.",
+      de: "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe.",
+    },
+    accent: "#F0457A",
+  },
+  {
+    name: "Hayley", country: "NZ", date: "2026-05",
+    text: {
+      en: "Was a little nervous about buying this because of the low price… but it has arrived in New Zealand safe and well. I love it!",
+      de: "Ich war wegen des niedrigen Preises etwas nervös — aber es ist sicher und unversehrt in Neuseeland angekommen. Ich bin begeistert!",
+    },
     img: "/media/reviews/review-nz.jpg",
     alt: "Customer photo: Coilo Spiral Bookshelf in Cyan on a pink sideboard",
+    accent: "#F2A900",
   },
-  { name: "Claudia", meta: "Deutschland · Juni 2026", text: "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe." },
-  { name: "Larin", meta: "New Zealand · June 2026", text: "Really beautiful product!! I would recommend." },
+  {
+    name: "Larin", country: "NZ", date: "2026-06",
+    text: {
+      en: "Really beautiful product!! I would recommend.",
+      de: "Ein wirklich wunderschönes Produkt!! Ich kann es nur empfehlen.",
+    },
+    accent: "#F2A3BE",
+  },
 ];
 
 // first in-stock finish — used for generic "Shop Now" CTAs (Sakura is sold out)
@@ -334,7 +366,47 @@ function MotionSection() {
 
 // ── Reviews ───────────────────────────────────────────
 function Reviews() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
+  // "Deutschland · Juni 2026" (de) / "Germany · June 2026" (en) — via Intl,
+  // so country names and months localize without a dictionary.
+  const metaFor = (r: Review) => {
+    const locale = lang === "de" ? "de-DE" : "en-GB";
+    const parts: string[] = [];
+    if (r.country) {
+      try {
+        const c = new Intl.DisplayNames([locale], { type: "region" }).of(r.country);
+        if (c) parts.push(c);
+      } catch { parts.push(r.country); }
+    }
+    const [y, m] = r.date.split("-").map(Number);
+    parts.push(new Date(y, m - 1, 1).toLocaleDateString(locale, { month: "long", year: "numeric" }));
+    return parts.join(" · ");
+  };
+
+  const slideTo = (i: number) => {
+    const track = trackRef.current;
+    const slide = track?.children[i] as HTMLElement | undefined;
+    if (track && slide) {
+      track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: "smooth" });
+    }
+  };
+  const step = (dir: number) =>
+    slideTo(Math.min(REVIEWS.length - 1, Math.max(0, active + dir)));
+
+  const onTrackScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    let best = 0, bestDist = Infinity;
+    ([...track.children] as HTMLElement[]).forEach((s, i) => {
+      const d = Math.abs(s.offsetLeft - track.offsetLeft - track.scrollLeft);
+      if (d < bestDist) { bestDist = d; best = i; }
+    });
+    setActive(best);
+  };
+
   return (
     <section className="c-reviews" id="reviews" data-nav-theme="light">
       <RevealWrap className="c-reviews__head">
@@ -342,19 +414,47 @@ function Reviews() {
         <h2>{t.reviews.title}</h2>
         <p className="c-reviews__caption">{t.reviews.caption}</p>
       </RevealWrap>
-      <div className="c-reviews__grid">
+      <RevealWrap className="c-reviews__shell" delay={120}>
+        <button className="c-reviews__arrow c-reviews__arrow--prev" onClick={() => step(-1)}
+                aria-label={lang === "de" ? "Vorherige Bewertung" : "Previous review"}
+                disabled={active === 0}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        <div className="c-reviews__track" ref={trackRef} onScroll={onTrackScroll}
+             role="region" aria-label={t.reviews.eyebrow} tabIndex={0}>
+          {REVIEWS.map((r, i) => (
+            <article key={r.name + r.date}
+                     className={`c-reviews__slide ${r.img ? "c-reviews__slide--photo" : ""}`}
+                     style={{ "--rv-accent": r.accent } as CSSProperties}>
+              {r.img && (
+                <img src={r.img} alt={r.alt ?? ""} className="c-reviews__photo"
+                     width={675} height={900} loading="lazy" />
+              )}
+              <div className="c-reviews__body">
+                <span className="c-reviews__quote" aria-hidden="true">“</span>
+                <div className="c-reviews__stars" aria-label="5 out of 5 stars">★★★★★</div>
+                <p className="c-reviews__text">{r.text[lang]}</p>
+                <p className="c-reviews__by"><strong>{r.name}</strong> · {metaFor(r)}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <button className="c-reviews__arrow c-reviews__arrow--next" onClick={() => step(1)}
+                aria-label={lang === "de" ? "Nächste Bewertung" : "Next review"}
+                disabled={active === REVIEWS.length - 1}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </RevealWrap>
+      <div className="c-reviews__dots" role="tablist" aria-label={t.reviews.eyebrow}>
         {REVIEWS.map((r, i) => (
-          <RevealWrap key={r.meta + i} className="c-reviews__card" delay={i * 100}>
-            {r.img && (
-              <img src={r.img} alt={r.alt ?? ""} className="c-reviews__photo"
-                   width={675} height={900} loading="lazy" />
-            )}
-            <div className="c-reviews__stars" aria-label="5 out of 5 stars">★★★★★</div>
-            <p className="c-reviews__text">“{r.text}”</p>
-            <p className="c-reviews__by"><strong>{r.name ?? t.reviews.buyer}</strong> · {r.meta}</p>
-          </RevealWrap>
+          <button key={i} className={`c-reviews__dot ${i === active ? "active" : ""}`}
+                  onClick={() => slideTo(i)}
+                  aria-label={`${i + 1} / ${REVIEWS.length}`} />
         ))}
       </div>
+      <a href={`${ETSY_URL}#reviews`} target="_blank" rel="noopener" className="c-reviews__all">
+        {t.reviews.readAll}
+      </a>
     </section>
   );
 }
