@@ -82,7 +82,7 @@ const PRODUCTS: Product[] = [
 type Review = { name?: string; meta: string; text: string; img?: string; alt?: string };
 const REVIEWS: Review[] = [
   {
-    name: "Susan", meta: "July 2026",
+    name: "Susan", meta: "UK · July 2026",
     text: "Love this — makes a quirky addition to anyone’s home.",
     img: "/media/reviews/review-quirky.jpg",
     alt: "Customer photo: Coilo Spiral Bookshelf in Cyan holding books on a wooden shelf",
@@ -93,8 +93,8 @@ const REVIEWS: Review[] = [
     img: "/media/reviews/review-nz.jpg",
     alt: "Customer photo: Coilo Spiral Bookshelf in Cyan on a pink sideboard",
   },
-  { name: "Claudia", meta: "Juni 2026", text: "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe." },
-  { name: "Larin", meta: "June 2026", text: "Really beautiful product!! I would recommend." },
+  { name: "Claudia", meta: "Deutschland · Juni 2026", text: "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe." },
+  { name: "Larin", meta: "New Zealand · June 2026", text: "Really beautiful product!! I would recommend." },
 ];
 
 // first in-stock finish — used for generic "Shop Now" CTAs (Sakura is sold out)
