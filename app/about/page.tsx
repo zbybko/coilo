@@ -4,37 +4,13 @@ import { useEffect, useRef, CSSProperties } from "react";
 import SiteNav from "../components/SiteNav";
 import LegalLinks from "../components/LegalLinks";
 import { captureAttribution } from "../../lib/attribution";
+import { LangProvider, useI18n } from "../../lib/i18n";
 
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
 const PINTEREST_URL = "https://de.pinterest.com/coilostudio/";
 
-const STEPS = [
-  { num: "01", title: "Parametric modeling",
-    desc: "The spiral geometry is defined parametrically — wall thickness, pitch, and curvature are all tuned for strength and visual balance before any material is used.",
-    detail: { label: "Software", val: "Custom parametric CAD pipeline" } },
-  { num: "02", title: "Slicing & path planning",
-    desc: "The 3D model is sliced into thousands of layers, each 0.2 mm thin. The printer path is optimized to minimize seams and maximize surface smoothness.",
-    detail: { label: "Layer height", val: "0.2 mm — ~900 layers per unit" } },
-  { num: "03", title: "FDM printing",
-    desc: "Each unit is printed on a professional FDM machine using PLA filament. The continuous spiral form requires no supports — the geometry is self-supporting by design.",
-    detail: { label: "Print time", val: "~16–18 hours per unit" } },
-  { num: "04", title: "Post-processing",
-    desc: "After printing, each piece is inspected, cleaned, and lightly finished. No painting — the color runs through the entire material.",
-    detail: null },
-  { num: "05", title: "Quality check & packing",
-    desc: "Every shelf passes a visual and structural inspection before being carefully packed in recycled cardboard and shipped from Germany.",
-    detail: { label: "Shipping", val: "EU-wide, tracked & insured" } },
-];
-
-const MAT_PROPS = [
-  { label: "Weight", val: "~280 g" },
-  { label: "Dimensions", val: "245×178×192 mm" },
-  { label: "Finish", val: "Smooth matte" },
-  { label: "Durability", val: "High rigidity" },
-];
-
-const PILLS = ["Zero-waste production", "Plant-based PLA", "No assembly needed", "Made to order", "Recycled packaging"];
+// STEPS / MAT_PROPS / PILLS are built from the i18n dictionary inside AboutInner.
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -63,6 +39,29 @@ function Rv({ children, className = "", delay = 0, style = {} }:
 }
 
 export default function AboutPage() {
+  return (
+    <LangProvider>
+      <AboutInner />
+    </LangProvider>
+  );
+}
+
+function AboutInner() {
+  const { t } = useI18n();
+  const STEPS = [
+    { num: "01", title: t.about.s1t, desc: t.about.s1d, detail: { label: t.about.s1l, val: t.about.s1v } },
+    { num: "02", title: t.about.s2t, desc: t.about.s2d, detail: { label: t.about.s2l, val: t.about.s2v } },
+    { num: "03", title: t.about.s3t, desc: t.about.s3d, detail: { label: t.about.s3l, val: t.about.s3v } },
+    { num: "04", title: t.about.s4t, desc: t.about.s4d, detail: null as { label: string; val: string } | null },
+    { num: "05", title: t.about.s5t, desc: t.about.s5d, detail: { label: t.about.s5l, val: t.about.s5v } },
+  ];
+  const MAT_PROPS = [
+    { label: t.about.weight, val: "~280 g" },
+    { label: t.about.dimensions, val: "245×178×192 mm" },
+    { label: t.about.finish, val: t.about.finishVal },
+    { label: t.about.durability, val: t.about.durabilityVal },
+  ];
+  const PILLS = t.about.pills;
   useEffect(() => {
     captureAttribution(); // store utm_*/click IDs for the checkout hop
   }, []);
@@ -213,16 +212,16 @@ export default function AboutPage() {
 
       {/* Hero */}
       <section className="about-hero">
-        <p className="about-hero__eyebrow">How It&apos;s Made</p>
-        <h1>Printed with <em>precision</em>,<br />shaped by design.</h1>
-        <p>Every Coilo bookshelf is 3D-printed in Germany — one continuous spiral, no assembly, no waste.</p>
+        <p className="about-hero__eyebrow">{t.about.eyebrow}</p>
+        <h1>{t.about.h1a}<em>{t.about.h1em}</em>{t.about.h1b}<br />{t.about.h1c}</h1>
+        <p>{t.about.heroText}</p>
       </section>
 
       {/* Timeline */}
       <section className="timeline">
         <Rv className="timeline__header">
-          <h2>From file to shelf.</h2>
-          <p>The journey of a single Coilo takes about 18 hours — from digital model to finished product.</p>
+          <h2>{t.about.tlTitle}</h2>
+          <p>{t.about.tlText}</p>
         </Rv>
         <div className="timeline__grid">
           {STEPS.map((s, i) => (
@@ -249,9 +248,9 @@ export default function AboutPage() {
           <video src="/media/site-assets/video/print-timelapse.mp4" ...> once provided */}
       <section className="timelapse">
         <Rv className="timelapse__inner">
-          <p className="timelapse__eyebrow">Printed, not manufactured</p>
-          <div className="timelapse__frame" aria-label="Print time-lapse coming soon">
-            <span className="timelapse__placeholder">Print time-lapse — coming soon</span>
+          <p className="timelapse__eyebrow">{t.about.tlapseEyebrow}</p>
+          <div className="timelapse__frame" aria-label={t.about.tlapsePlaceholder}>
+            <span className="timelapse__placeholder">{t.about.tlapsePlaceholder}</span>
           </div>
         </Rv>
       </section>
@@ -260,9 +259,9 @@ export default function AboutPage() {
       <section className="materials">
         <div className="materials__content">
           <Rv>
-            <p className="materials__eyebrow">Material</p>
-            <h2>PLA — plant-based plastic.</h2>
-            <p>Polylactic acid is derived from renewable resources like corn starch. It&apos;s rigid, lightweight, and has a smooth matte finish that feels premium to the touch.</p>
+            <p className="materials__eyebrow">{t.about.matEyebrow}</p>
+            <h2>{t.about.matTitle}</h2>
+            <p>{t.about.matText}</p>
           </Rv>
           <Rv className="mat-props" delay={120}>
             {MAT_PROPS.map(m => (
@@ -278,8 +277,8 @@ export default function AboutPage() {
       {/* Sustainability */}
       <section className="sustain">
         <Rv>
-          <h2>Made responsibly.</h2>
-          <p>3D printing produces near-zero material waste. Each Coilo uses only the filament it needs — no molds, no offcuts, no overproduction.</p>
+          <h2>{t.about.susTitle}</h2>
+          <p>{t.about.susText}</p>
           <div className="sustain__pills">
             {PILLS.map(p => <span key={p} className="sustain__pill">{p}</span>)}
           </div>
@@ -289,11 +288,11 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="about-cta">
         <Rv>
-          <h2>See it in your color.</h2>
-          <p>Five finishes, one sculptural form. Explore them all.</p>
+          <h2>{t.about.ctaTitle}</h2>
+          <p>{t.about.ctaText}</p>
           <div className="about-cta__actions">
-            <a href="/colors" className="btn-dark">Explore Colors</a>
-            <a href="/" className="btn-outline-dark">Back to Home</a>
+            <a href="/colors" className="btn-dark">{t.about.ctaExplore}</a>
+            <a href="/" className="btn-outline-dark">{t.about.ctaHome}</a>
           </div>
         </Rv>
       </section>
@@ -303,16 +302,16 @@ export default function AboutPage() {
         <div className="about-foot__row">
           <span>© 2026 Coilo</span>
           <div className="about-foot__links">
-            <a href="/">Home</a>
-            <a href="/about">How It&apos;s Made</a>
-            <a href="/colors">Colors</a>
+            <a href="/">{t.footer.home}</a>
+            <a href="/about">{t.nav.about}</a>
+            <a href="/colors">{t.nav.colors}</a>
             <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
             <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
             <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
           </div>
         </div>
         <div className="about-foot__row">
-          <span>Rechtliches</span>
+          <span>{t.footer.legal}</span>
           <LegalLinks />
         </div>
       </footer>

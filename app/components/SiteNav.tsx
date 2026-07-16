@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useI18n, Lang } from "../../lib/i18n";
 
 // relative luminance from a computed "rgb(a)" string
 function bgLuminance(c: string): number {
@@ -17,7 +18,30 @@ function bgLuminance(c: string): number {
 
 // Shared transparent header used on every page (logo-only, no dark background).
 // Text/icon colour flips dark/light based on the background sitting under it.
+function LangSwitcher() {
+  const { lang, setLang } = useI18n();
+  const opt = (l: Lang) => (
+    <button
+      key={l}
+      className={`c-nav__lang-opt ${lang === l ? "active" : ""}`}
+      onClick={() => setLang(l)}
+      aria-pressed={lang === l}
+      aria-label={l === "en" ? "English" : "Deutsch"}
+    >
+      {l.toUpperCase()}
+    </button>
+  );
+  return (
+    <div className="c-nav__lang" role="group" aria-label="Language / Sprache">
+      {opt("en")}
+      <span className="c-nav__lang-sep" aria-hidden="true">/</span>
+      {opt("de")}
+    </div>
+  );
+}
+
 export default function SiteNav({ active }: { active?: "colors" | "about" }) {
+  const { t } = useI18n();
   const [menuOpen, setMenu] = useState(false);
   const [onLight, setOnLight] = useState(!active); // home opens on the cream hero; sub-pages open dark
   const navRef = useRef<HTMLElement>(null);
@@ -76,10 +100,11 @@ export default function SiteNav({ active }: { active?: "colors" | "about" }) {
         <img src="/media/coilo-logo.png" alt="Coilo" className="c-nav__logo-img" />
       </a>
       <div className={`c-nav__links ${menuOpen ? "open" : ""}`}>
-        <a href="/colors" className={active === "colors" ? "active" : ""} onClick={() => setMenu(false)}>Colors</a>
-        <a href="/about" className={active === "about" ? "active" : ""} onClick={() => setMenu(false)}>How It&apos;s Made</a>
+        <a href="/colors" className={active === "colors" ? "active" : ""} onClick={() => setMenu(false)}>{t.nav.colors}</a>
+        <a href="/about" className={active === "about" ? "active" : ""} onClick={() => setMenu(false)}>{t.nav.about}</a>
+        <LangSwitcher />
         <a href="/#configurator" className="c-nav__cta" onClick={() => setMenu(false)}>
-          Pick a Color
+          {t.nav.cta}
         </a>
       </div>
       <button className={`c-nav__burger ${menuOpen ? "open" : ""}`} onClick={() => setMenu(!menuOpen)} aria-label="Menu">

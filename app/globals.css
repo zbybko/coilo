@@ -66,6 +66,14 @@ h1,h2,h3,p { margin: 0; }
   padding: 8px 18px; border: 1.5px solid rgba(255,255,255,.25); border-radius: 999px;
   color: #fff; font-weight: 700; transition: border-color .2s; }
 .c-nav__cta:hover { border-color: rgba(255,255,255,.6); }
+.c-nav__lang { display: inline-flex; align-items: center; gap: 6px; }
+.c-nav__lang-opt { padding: 4px 2px; font-size: 13px; font-weight: 600; color: inherit;
+  opacity: .55; cursor: pointer; background: none; border: none;
+  transition: opacity .2s, color .2s; }
+.c-nav__lang-opt:hover { opacity: .85; }
+.c-nav__lang-opt.active { opacity: 1; }
+.c-nav__lang-opt:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 3px; }
+.c-nav__lang-sep { opacity: .3; font-size: 12px; }
 .c-nav__burger { display: none; flex-direction: column; gap: 5px; width: 28px; padding: 4px 0; }
 .c-nav__burger span { display: block; height: 2px; background: #fff; border-radius: 2px;
   transition: transform .3s, opacity .3s; }

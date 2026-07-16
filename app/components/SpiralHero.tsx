@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, CSSProperties, ReactNode } from "react";
+import { useI18n, Dict } from "../../lib/i18n";
 
 // stop on the dark tunnel-exit (frames 253-280 brighten to cream — unused so the
 // hero hands off into the dark site below)
@@ -63,12 +64,14 @@ type Act = {
 };
 
 // progress ranges (0..1) mapped to the journey, each with a contextual icon
-const ACTS: Act[] = [
-  { from: 0.0, to: 0.14, kicker: "3D-printed design object", title: "Coilo", sub: "Where design unwinds.", brand: true, dark: true, icon: "spark" },
-  { from: 0.24, to: 0.36, title: "One continuous line", sub: "A single sweeping coil holds your books upright — structure becomes ornament.", spiral: true, icon: "coil" },
-  { from: 0.46, to: 0.58, title: "Printed, not manufactured", sub: "Premium PLA, precision FDM, finished by hand. Made in Germany.", spiral: true, icon: "layers" },
-  { from: 0.68, to: 0.8, title: "Five finishes. One icon.", sub: "Sakura · Cyan · Cherry · Rosé · Sunflower", spiral: true, icon: "palette" },
-];
+function actsFor(t: Dict): Act[] {
+  return [
+    { from: 0.0, to: 0.14, kicker: t.hero.kicker, title: "Coilo", sub: t.hero.sub1, brand: true, dark: true, icon: "spark" },
+    { from: 0.24, to: 0.36, title: t.hero.title2, sub: t.hero.sub2, spiral: true, icon: "coil" },
+    { from: 0.46, to: 0.58, title: t.hero.title3, sub: t.hero.sub3, spiral: true, icon: "layers" },
+    { from: 0.68, to: 0.8, title: t.hero.title4, sub: "Sakura · Cyan · Cherry · Rosé · Sunflower", spiral: true, icon: "palette" },
+  ];
+}
 
 // the tunnel's ring colour at each point of the journey (bright finish accents,
 // readable on the dark navy interior). Drives --spiral-color.
@@ -117,6 +120,8 @@ function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, cw: num
 const READY = 24; // first batch of frames that the loader waits for
 
 export default function SpiralHero() {
+  const { t } = useI18n();
+  const ACTS = actsFor(t);
   const wrapRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -255,10 +260,10 @@ export default function SpiralHero() {
         <canvas ref={canvasRef} className="sh-canvas" />
         <div className="sh-act sh-act--dark sh-act--static" data-active="1">
           {HeroIcons.spark}
-          <p className="sh-kicker">3D-printed design object</p>
+          <p className="sh-kicker">{t.hero.kicker}</p>
           <h1 className="sh-brand">Coilo</h1>
-          <p className="sh-sub">Where design unwinds. 3D-printed spiral bookshelves, made in Germany.</p>
-          <a href="#configurator" className="sh-cta">Choose your colour</a>
+          <p className="sh-sub">{t.hero.sub1}</p>
+          <a href="#configurator" className="sh-cta">{t.hero.cta}</a>
         </div>
         <StyleTag />
       </section>
@@ -326,7 +331,7 @@ export default function SpiralHero() {
 
         {/* scroll hint (fades after start) */}
         <div className={`sh-hint${progress < 0.16 ? " sh-hint--dark" : ""}`} style={{ opacity: progress < 0.04 ? 1 : 0 }}>
-          <span>Scroll to unwind</span>
+          <span>{t.hero.scroll}</span>
           <div className="sh-hint__line" />
         </div>
       </div>
