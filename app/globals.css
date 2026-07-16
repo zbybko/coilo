@@ -74,6 +74,7 @@ h1,h2,h3,p { margin: 0; }
 .c-nav__lang-opt.active { opacity: 1; }
 .c-nav__lang-opt:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 3px; }
 .c-nav__lang-sep { opacity: .3; font-size: 12px; }
+.c-nav__scrim { display: none; } /* only meaningful while the mobile drawer exists */
 .c-nav__burger { display: none; flex-direction: column; gap: 5px; width: 28px; padding: 4px 0; }
 .c-nav__burger span { display: block; height: 2px; background: #fff; border-radius: 2px;
   transition: transform .3s, opacity .3s; }
@@ -420,6 +421,11 @@ h1,h2,h3,p { margin: 0; }
     padding: 40px 28px; gap: 24px; font-size: 18px;
     transform: translateX(100%); transition: transform .35s ease; z-index: 99; }
   .c-nav__links.open { transform: translateX(0); }
+  /* tap outside the drawer to close it */
+  .c-nav__scrim { display: block; position: fixed; inset: 0; z-index: 98; border: none;
+    background: rgba(0,0,0,.35); cursor: pointer; padding: 0;
+    animation: navScrimIn .25s ease; }
+  @keyframes navScrimIn { from { opacity: 0; } to { opacity: 1; } }
   /* the drawer is always dark — the light/dark nav probe must not recolor it */
   .c-nav__links, .c-nav--light .c-nav__links { color: rgba(248,245,238,.85); }
   .c-nav--light .c-nav__links a:hover,

@@ -43,6 +43,14 @@ function LangSwitcher() {
 export default function SiteNav({ active }: { active?: "colors" | "about" }) {
   const { t } = useI18n();
   const [menuOpen, setMenu] = useState(false);
+
+  // close the mobile drawer with Esc
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setMenu(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
   const [onLight, setOnLight] = useState(!active); // home opens on the cream hero; sub-pages open dark
   const navRef = useRef<HTMLElement>(null);
 
@@ -99,6 +107,10 @@ export default function SiteNav({ active }: { active?: "colors" | "about" }) {
       <a href="/" className="c-nav__brand" aria-label="Coilo home">
         <img src="/media/coilo-logo.png" alt="Coilo" className="c-nav__logo-img" />
       </a>
+      {menuOpen && (
+        <button className="c-nav__scrim" aria-label="Close menu"
+                onClick={() => setMenu(false)} />
+      )}
       <div className={`c-nav__links ${menuOpen ? "open" : ""}`}>
         <a href="/colors" className={active === "colors" ? "active" : ""} onClick={() => setMenu(false)}>{t.nav.colors}</a>
         <a href="/about" className={active === "about" ? "active" : ""} onClick={() => setMenu(false)}>{t.nav.about}</a>
