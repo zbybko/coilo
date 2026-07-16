@@ -138,6 +138,8 @@ function AboutInner() {
           border:1px solid rgba(17,17,17,.08); }
         .timelapse__placeholder { font-size:13px; font-weight:600; letter-spacing:.04em;
           color:rgba(248,245,238,.4); }
+        .timelapse__video { position:absolute; inset:0; width:100%; height:100%;
+          object-fit:cover; display:block; }
 
         .materials { display:grid; grid-template-columns:1fr; }
         .materials__image { position:relative; overflow:hidden; }
@@ -244,13 +246,18 @@ function AboutInner() {
         </div>
       </section>
 
-      {/* Print time-lapse — reserved container; swap the placeholder for a
-          <video src="/media/site-assets/video/print-timelapse.mp4" ...> once provided */}
+      {/* Print time-lapse: four colour timelapses cut into one continuous print */}
       <section className="timelapse">
         <Rv className="timelapse__inner">
           <p className="timelapse__eyebrow">{t.about.tlapseEyebrow}</p>
-          <div className="timelapse__frame" aria-label={t.about.tlapsePlaceholder}>
-            <span className="timelapse__placeholder">{t.about.tlapsePlaceholder}</span>
+          <div className="timelapse__frame">
+            <video
+              className="timelapse__video"
+              src="/media/site-assets/video/print-timelapse.mp4"
+              poster="/media/site-assets/video/print-timelapse-poster.jpg"
+              muted autoPlay loop playsInline preload="metadata"
+              aria-label={t.about.tlapseAria}
+            />
           </div>
         </Rv>
       </section>

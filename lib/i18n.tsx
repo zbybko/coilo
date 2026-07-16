@@ -145,6 +145,7 @@ const EN = {
     s5v: "EU-wide, tracked & insured",
     tlapseEyebrow: "Printed, not manufactured",
     tlapsePlaceholder: "Print time-lapse — coming soon",
+    tlapseAria: "Time-lapse: a Coilo spiral being 3D printed, cycling through all colours",
     matEyebrow: "Material",
     matTitle: "PLA — plant-based plastic.",
     matText:
@@ -304,6 +305,7 @@ const DE: typeof EN = {
     s5v: "EU-weit, mit Tracking & versichert",
     tlapseEyebrow: "Gedruckt, nicht gefertigt",
     tlapsePlaceholder: "Druck-Zeitraffer — bald verfügbar",
+    tlapseAria: "Zeitraffer: eine Coilo-Spirale wird 3D-gedruckt, alle Farben im Wechsel",
     matEyebrow: "Material",
     matTitle: "PLA — Kunststoff auf Pflanzenbasis.",
     matText:
