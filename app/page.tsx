@@ -386,15 +386,21 @@ function Reviews() {
     return parts.join(" · ");
   };
 
-  const slideTo = (i: number) => {
-    const track = trackRef.current;
-    const slide = track?.children[i] as HTMLElement | undefined;
-    if (track && slide) {
-      track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: "smooth" });
-    }
+  // Infinite loop: the slide set is rendered 3× and we silently jump one set
+  // width whenever the user drifts out of the middle copy — the repeated
+  // content makes the jump invisible.
+  const N = REVIEWS.length;
+  const setWidth = (track: HTMLDivElement) => {
+    const a = track.children[0] as HTMLElement;
+    const b = track.children[N] as HTMLElement;
+    return b.offsetLeft - a.offsetLeft;
   };
-  const step = (dir: number) =>
-    slideTo(Math.min(REVIEWS.length - 1, Math.max(0, active + dir)));
+
+  // start in the middle copy
+  useEffect(() => {
+    const track = trackRef.current;
+    if (track) track.scrollLeft = setWidth(track);
+  }, []);
 
   const nearestSlide = (track: HTMLDivElement) => {
     let best = 0, bestDist = Infinity;
@@ -405,9 +411,43 @@ function Reviews() {
     return best;
   };
 
+  const slideTo = (child: number) => {
+    const track = trackRef.current;
+    const slide = track?.children[child] as HTMLElement | undefined;
+    if (track && slide) {
+      track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: "smooth" });
+    }
+  };
+
+  const step = (dir: number) => {
+    const track = trackRef.current;
+    if (track) slideTo(nearestSlide(track) + dir);
+  };
+
+  // clicking a dot: go to the nearest clone of that review
+  const dotTo = (i: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const current = nearestSlide(track);
+    const candidates = [i, i + N, i + 2 * N];
+    const target = candidates.reduce((a, b) =>
+      Math.abs(b - current) < Math.abs(a - current) ? b : a);
+    slideTo(target);
+  };
+
+  // once scrolling settles, normalise back into the middle copy
+  const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onTrackScroll = () => {
     const track = trackRef.current;
-    if (track) setActive(nearestSlide(track));
+    if (!track) return;
+    setActive(nearestSlide(track) % N);
+    if (settleTimer.current) clearTimeout(settleTimer.current);
+    settleTimer.current = setTimeout(() => {
+      if (drag.current.active) return;
+      const w = setWidth(track);
+      if (track.scrollLeft < w * 0.5) track.scrollLeft += w;
+      else if (track.scrollLeft >= w * 1.5) track.scrollLeft -= w;
+    }, 160);
   };
 
   // Desktop drag-to-scroll (hold left mouse button). Touch keeps native scroll.
@@ -443,41 +483,42 @@ function Reviews() {
       </RevealWrap>
       <RevealWrap className="c-reviews__shell" delay={120}>
         <button className="c-reviews__arrow c-reviews__arrow--prev" onClick={() => step(-1)}
-                aria-label={lang === "de" ? "Vorherige Bewertung" : "Previous review"}
-                disabled={active === 0}>
+                aria-label={lang === "de" ? "Vorherige Bewertung" : "Previous review"}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
         </button>
         <div className="c-reviews__track" ref={trackRef} onScroll={onTrackScroll}
              onPointerDown={onPointerDown} onPointerMove={onPointerMove}
              onPointerUp={endDrag} onPointerCancel={endDrag} onPointerLeave={endDrag}
              role="region" aria-label={t.reviews.eyebrow} tabIndex={0}>
-          {REVIEWS.map((r, i) => (
-            <article key={r.name + r.date}
-                     className={`c-reviews__slide ${r.img ? "c-reviews__slide--photo" : ""}`}
-                     style={{ "--rv-accent": r.accent } as CSSProperties}>
-              {r.img && (
-                <img src={r.img} alt={r.alt ?? ""} className="c-reviews__photo"
-                     width={675} height={900} loading="lazy" draggable={false} />
-              )}
-              <div className="c-reviews__body">
-                <span className="c-reviews__quote" aria-hidden="true">“</span>
-                <div className="c-reviews__stars" aria-label="5 out of 5 stars">★★★★★</div>
-                <p className="c-reviews__text">{r.text[lang]}</p>
-                <p className="c-reviews__by"><strong>{r.name}</strong> · {metaFor(r)}</p>
-              </div>
-            </article>
-          ))}
+          {[0, 1, 2].flatMap((copy) =>
+            REVIEWS.map((r, i) => (
+              <article key={`${copy}-${r.name}-${r.date}`}
+                       className={`c-reviews__slide ${r.img ? "c-reviews__slide--photo" : ""}`}
+                       style={{ "--rv-accent": r.accent } as CSSProperties}
+                       aria-hidden={copy !== 1 || undefined}>
+                {r.img && (
+                  <img src={r.img} alt={copy === 1 ? (r.alt ?? "") : ""} className="c-reviews__photo"
+                       width={675} height={900} loading="lazy" draggable={false} />
+                )}
+                <div className="c-reviews__body">
+                  <span className="c-reviews__quote" aria-hidden="true">“</span>
+                  <div className="c-reviews__stars" aria-label="5 out of 5 stars">★★★★★</div>
+                  <p className="c-reviews__text">{r.text[lang]}</p>
+                  <p className="c-reviews__by"><strong>{r.name}</strong> · {metaFor(r)}</p>
+                </div>
+              </article>
+            ))
+          )}
         </div>
         <button className="c-reviews__arrow c-reviews__arrow--next" onClick={() => step(1)}
-                aria-label={lang === "de" ? "Nächste Bewertung" : "Next review"}
-                disabled={active === REVIEWS.length - 1}>
+                aria-label={lang === "de" ? "Nächste Bewertung" : "Next review"}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7" /></svg>
         </button>
       </RevealWrap>
       <div className="c-reviews__dots" role="tablist" aria-label={t.reviews.eyebrow}>
         {REVIEWS.map((r, i) => (
           <button key={i} className={`c-reviews__dot ${i === active ? "active" : ""}`}
-                  onClick={() => slideTo(i)}
+                  onClick={() => dotTo(i)}
                   aria-label={`${i + 1} / ${REVIEWS.length}`} />
         ))}
       </div>
