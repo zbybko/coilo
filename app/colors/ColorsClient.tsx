@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, CSSProperties } from "react";
 import SiteNav from "../components/SiteNav";
-import LegalLinks from "../components/LegalLinks";
+import SiteFooter from "../components/SiteFooter";
 import { captureAttribution, cartUrl, goToCheckout } from "../../lib/attribution";
 import { LangProvider, useI18n, Dict } from "../../lib/i18n";
 import { useMarket } from "../../lib/use-market";
@@ -334,22 +334,7 @@ function ColorsInner() {
         </main>
 
         {/* Footer */}
-        <footer className="col-foot">
-          <div className="col-foot__row">
-            <span>© 2026 Coilo</span>
-            <div className="col-foot__links">
-              <a href="/">{t.footer.home}</a>
-              <a href="/about">{t.nav.about}</a>
-              <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
-              <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
-              <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
-            </div>
-          </div>
-          <div className="col-foot__row">
-            <span>{t.footer.legal}</span>
-            <LegalLinks />
-          </div>
-        </footer>
+        <SiteFooter theme="dark" />
       </div>
     </>
   );

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, CSSProperties } from "react";
 import SiteNav from "../components/SiteNav";
-import LegalLinks from "../components/LegalLinks";
+import SiteFooter from "../components/SiteFooter";
 import { captureAttribution } from "../../lib/attribution";
 import { LangProvider, useI18n } from "../../lib/i18n";
 
@@ -305,23 +305,7 @@ function AboutInner() {
       </section>
 
       {/* Footer */}
-      <footer className="about-foot">
-        <div className="about-foot__row">
-          <span>© 2026 Coilo</span>
-          <div className="about-foot__links">
-            <a href="/">{t.footer.home}</a>
-            <a href="/about">{t.nav.about}</a>
-            <a href="/colors">{t.nav.colors}</a>
-            <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
-            <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
-            <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
-          </div>
-        </div>
-        <div className="about-foot__row">
-          <span>{t.footer.legal}</span>
-          <LegalLinks />
-        </div>
-      </footer>
+      <SiteFooter theme="dark" />
     </>
   );
 }

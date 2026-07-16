@@ -107,6 +107,11 @@ const EN = {
     trust: "Trusted by buyers on Etsy · ★★★★★",
     home: "Home",
     legal: "Legal",
+    tagline: "3D-printed spiral bookshelves — designed and made in Germany.",
+    shopCol: "Shop",
+    helpCol: "Help",
+    allColors: "All colours",
+    rights: "All rights reserved.",
   },
   colorsPage: {
     material: "Material",
@@ -267,6 +272,11 @@ const DE: typeof EN = {
     trust: "Von Etsy-Käufern geschätzt · ★★★★★",
     home: "Start",
     legal: "Rechtliches",
+    tagline: "3D-gedruckte Spiral-Bücherregale — entworfen und gefertigt in Deutschland.",
+    shopCol: "Shop",
+    helpCol: "Hilfe",
+    allColors: "Alle Farben",
+    rights: "Alle Rechte vorbehalten.",
   },
   colorsPage: {
     material: "Material",

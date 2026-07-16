@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, CSSProperties } from "react";
 import SpiralHero from "./components/SpiralHero";
 import SiteNav from "./components/SiteNav";
-import LegalLinks from "./components/LegalLinks";
+import SiteFooter from "./components/SiteFooter";
 import { captureAttribution, cartUrl, goToCheckout } from "../lib/attribution";
 import { LangProvider, useI18n, Dict } from "../lib/i18n";
 import { useMarket } from "../lib/use-market";
@@ -511,20 +511,7 @@ function FooterCTA() {
           {t.footer.trust}
         </a>
       </RevealWrap>
-      <footer className="c-footer__bar">
-        <span>© 2026 Coilo · <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a></span>
-        <div className="c-footer__links">
-          <a href="/colors">{t.nav.colors}</a>
-          <a href="/about">{t.nav.about}</a>
-          <a href={TIKTOK_URL} target="_blank" rel="noopener">TikTok</a>
-          <a href={PINTEREST_URL} target="_blank" rel="noopener">Pinterest</a>
-          <a href={ETSY_URL} target="_blank" rel="noopener">Etsy</a>
-        </div>
-      </footer>
-      <footer className="c-footer__bar c-footer__bar--legal">
-        <span>{t.footer.legal}</span>
-        <LegalLinks />
-      </footer>
+      <SiteFooter theme="light" />
     </section>
   );
 }
