@@ -1,0 +1,50 @@
+[
+  {
+    "transactionId": 5108356136,
+    "name": "Susan",
+    "country": "GB",
+    "date": "2026-07",
+    "text": {
+      "en": "Love this — makes a quirky addition to anyone’s home.",
+      "de": "Ich finde es toll — eine originelle Ergänzung für jedes Zuhause."
+    },
+    "img": "/media/reviews/review-quirky.jpg",
+    "alt": "Customer photo: Coilo Spiral Bookshelf in Cyan holding books on a wooden shelf",
+    "accent": "#1BA6DF"
+  },
+  {
+    "transactionId": 5060708609,
+    "name": "Hayley",
+    "country": "NZ",
+    "date": "2026-05",
+    "text": {
+      "en": "Was a little nervous about buying this because of the low price… but it has arrived in New Zealand safe and well. I love it!",
+      "de": "Ich war wegen des niedrigen Preises etwas nervös — aber es ist sicher und unversehrt in Neuseeland angekommen. Ich bin begeistert!"
+    },
+    "img": "/media/reviews/review-nz.jpg",
+    "alt": "Customer photo: Coilo Spiral Bookshelf in Cyan on a pink sideboard",
+    "accent": "#F2A900"
+  },
+  {
+    "transactionId": 5082044712,
+    "name": "Claudia",
+    "country": "DE",
+    "date": "2026-06",
+    "text": {
+      "en": "Very beautiful colour — exactly what I had imagined.",
+      "de": "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe."
+    },
+    "accent": "#F0457A"
+  },
+  {
+    "transactionId": 5042668514,
+    "name": "Larin",
+    "country": "NZ",
+    "date": "2026-06",
+    "text": {
+      "en": "Really beautiful product!! I would recommend.",
+      "de": "Ein wirklich wunderschönes Produkt!! Ich kann es nur empfehlen."
+    },
+    "accent": "#F2A3BE"
+  }
+]

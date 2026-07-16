@@ -27,17 +27,23 @@ jobs:
           GMC_KEY: /tmp/gmc-key.json
         run: python3 scripts/gmc-links.py --sync-site
 
-      - name: Commit and redeploy if prices changed
+      - name: Pull new Etsy reviews
+        env:
+          ETSY_KEYSTRING: ${{ secrets.ETSY_KEYSTRING }}
+          ETSY_SHARED_SECRET: ${{ secrets.ETSY_SHARED_SECRET }}
+        run: python3 scripts/etsy-reviews.py
+
+      - name: Commit and redeploy if anything changed
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if ! git diff --quiet lib/market.ts; then
+          git add lib/market.ts lib/reviews.json public/media/reviews
+          if ! git diff --cached --quiet; then
             git config user.name "coilo-bot"
             git config user.email "support@coilo.de"
-            git add lib/market.ts
-            git commit -m "Auto-sync market prices from Merchant Center feeds"
+            git commit -m "Auto-sync: market prices / Etsy reviews"
             git push
             gh workflow run deploy.yml --ref main
           else
-            echo "prices unchanged"
+            echo "nothing changed"
           fi

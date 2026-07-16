@@ -77,12 +77,14 @@ const PRODUCTS: Product[] = [
   },
 ];
 
-// Real Etsy reviews (shop 64967232), fetched via Etsy API. All 5 stars.
-// Photos are buyer "appreciation photos" from the reviews themselves.
-// text.de are the translations Etsy shows German visitors.
-// country is an ISO code — localized at render time via Intl.DisplayNames.
+// Real Etsy reviews (shop 64967232). lib/reviews.json is refreshed weekly by
+// scripts/etsy-reviews.py (new 5★ reviews + buyer photos land automatically);
+// names/countries/translations can be polished by hand — the script never
+// touches existing entries. Photos are buyer "appreciation photos".
+import REVIEWS_DATA from "../lib/reviews.json";
 type Review = {
-  name: string;
+  transactionId: number;
+  name?: string;
   country?: string;
   date: string; // YYYY-MM
   text: { en: string; de: string };
@@ -90,44 +92,7 @@ type Review = {
   alt?: string;
   accent: string; // decorative quote-mark tint (brand colours)
 };
-const REVIEWS: Review[] = [
-  {
-    name: "Susan", country: "GB", date: "2026-07",
-    text: {
-      en: "Love this — makes a quirky addition to anyone’s home.",
-      de: "Ich finde es toll — eine originelle Ergänzung für jedes Zuhause.",
-    },
-    img: "/media/reviews/review-quirky.jpg",
-    alt: "Customer photo: Coilo Spiral Bookshelf in Cyan holding books on a wooden shelf",
-    accent: "#1BA6DF",
-  },
-  {
-    name: "Hayley", country: "NZ", date: "2026-05",
-    text: {
-      en: "Was a little nervous about buying this because of the low price… but it has arrived in New Zealand safe and well. I love it!",
-      de: "Ich war wegen des niedrigen Preises etwas nervös — aber es ist sicher und unversehrt in Neuseeland angekommen. Ich bin begeistert!",
-    },
-    img: "/media/reviews/review-nz.jpg",
-    alt: "Customer photo: Coilo Spiral Bookshelf in Cyan on a pink sideboard",
-    accent: "#F2A900",
-  },
-  {
-    name: "Claudia", country: "DE", date: "2026-06",
-    text: {
-      en: "Very beautiful colour — exactly what I had imagined.",
-      de: "Sehr schöne Farbe, genau so, wie ich es mir vorgestellt habe.",
-    },
-    accent: "#F0457A",
-  },
-  {
-    name: "Larin", country: "NZ", date: "2026-06",
-    text: {
-      en: "Really beautiful product!! I would recommend.",
-      de: "Ein wirklich wunderschönes Produkt!! Ich kann es nur empfehlen.",
-    },
-    accent: "#F2A3BE",
-  },
-];
+const REVIEWS = REVIEWS_DATA as Review[];
 
 // first in-stock finish — used for generic "Shop Now" CTAs (Sakura is sold out)
 const FIRST_AVAILABLE = PRODUCTS.find((p) => !p.soldOut) ?? PRODUCTS[0];
@@ -492,7 +457,7 @@ function Reviews() {
              role="region" aria-label={t.reviews.eyebrow} tabIndex={0}>
           {[0, 1, 2].flatMap((copy) =>
             REVIEWS.map((r, i) => (
-              <article key={`${copy}-${r.name}-${r.date}`}
+              <article key={`${copy}-${r.transactionId}`}
                        className={`c-reviews__slide ${r.img ? "c-reviews__slide--photo" : ""}`}
                        style={{ "--rv-accent": r.accent } as CSSProperties}
                        aria-hidden={copy !== 1 || undefined}>
@@ -504,7 +469,7 @@ function Reviews() {
                   <span className="c-reviews__quote" aria-hidden="true">“</span>
                   <div className="c-reviews__stars" aria-label="5 out of 5 stars">★★★★★</div>
                   <p className="c-reviews__text">{r.text[lang]}</p>
-                  <p className="c-reviews__by"><strong>{r.name}</strong> · {metaFor(r)}</p>
+                  <p className="c-reviews__by"><strong>{r.name ?? t.reviews.buyer}</strong> · {metaFor(r)}</p>
                 </div>
               </article>
             ))
