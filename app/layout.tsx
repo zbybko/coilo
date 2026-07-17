@@ -62,8 +62,13 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    // renamed from favicon.svg so the CDN edge cache can't serve the old icon
-    icon: "/icon-spiral.svg",
+    // renamed from favicon.svg so the CDN edge cache can't serve the old icon;
+    // 96px PNG alongside the SVG — Google's favicon crawler prefers raster
+    // sizes that are multiples of 48px
+    icon: [
+      { url: "/icon-spiral-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icon-spiral.svg", type: "image/svg+xml" },
+    ],
     shortcut: "/icon-spiral.svg",
     apple: "/apple-touch-icon.png",
   },
