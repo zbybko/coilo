@@ -1,18 +1,5 @@
 [
   {
-    "transactionId": 5108356136,
-    "name": "Susan",
-    "country": "GB",
-    "date": "2026-07",
-    "text": {
-      "en": "Love this — makes a quirky addition to anyone’s home.",
-      "de": "Ich finde es toll — eine originelle Ergänzung für jedes Zuhause."
-    },
-    "img": "/media/reviews/review-quirky.jpg",
-    "alt": "Customer photo: Coilo Spiral Bookshelf in Cyan holding books on a wooden shelf",
-    "accent": "#1BA6DF"
-  },
-  {
     "transactionId": 5060708609,
     "name": "Hayley",
     "country": "NZ",
@@ -24,6 +11,19 @@
     "img": "/media/reviews/review-nz.jpg",
     "alt": "Customer photo: Coilo Spiral Bookshelf in Cyan on a pink sideboard",
     "accent": "#F2A900"
+  },
+  {
+    "transactionId": 5108356136,
+    "name": "Susan",
+    "country": "GB",
+    "date": "2026-07",
+    "text": {
+      "en": "Love this — makes a quirky addition to anyone’s home.",
+      "de": "Ich finde es toll — eine originelle Ergänzung für jedes Zuhause."
+    },
+    "img": "/media/reviews/review-quirky.jpg",
+    "alt": "Customer photo: Coilo Spiral Bookshelf in Cyan holding books on a wooden shelf",
+    "accent": "#1BA6DF"
   },
   {
     "transactionId": 5082044712,
@@ -46,5 +46,14 @@
       "de": "Ein wirklich wunderschönes Produkt!! Ich kann es nur empfehlen."
     },
     "accent": "#F2A3BE"
+  },
+  {
+    "transactionId": 5132962994,
+    "date": "2026-07",
+    "text": {
+      "en": "Toller Service, netter Kontakt und Ware wie versprochen :)",
+      "de": "Toller Service, netter Kontakt und Ware wie versprochen :)"
+    },
+    "accent": "#C0303A"
   }
 ]
