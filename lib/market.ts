@@ -25,11 +25,11 @@ export const MARKETS: Record<MarketCode, Market> = {
   us: { code: "us", currency: "USD", amount: 69, display: "$69" },
   pl: { code: "pl", currency: "PLN", amount: 260, display: "260 zł" },
   hu: { code: "hu", currency: "HUF", amount: 21900, display: "21 900 Ft" },
-  se: { code: "se", currency: "SEK", amount: 664, display: "664 kr" },
+  se: { code: "se", currency: "SEK", amount: 670, display: "670 kr" },
   dk: { code: "dk", currency: "DKK", amount: 450, display: "450 kr" },
   gb: { code: "gb", currency: "GBP", amount: 49, display: "£49" },
   ro: { code: "ro", currency: "RON", amount: 316, display: "316 lei" },
-  cz: { code: "cz", currency: "CZK", amount: 1458, display: "1 458 Kč" },
+  cz: { code: "cz", currency: "CZK", amount: 1457, display: "1 457 Kč" },
 };
 
 const COUNTRY_TO_MARKET: Record<string, MarketCode> = {
