@@ -1,5 +1,38 @@
 # Coilo Headless Shopify Site
 
+## Temporary enquiry mode
+
+Checkout is currently disabled by `CHECKOUT_ENABLED` in `lib/sales.ts`.
+Buy buttons lead to `/enquiry?color=<slug>`, including their no-JavaScript
+links. The old `/api/buy` endpoint redirects to the enquiry page too.
+Shopify integration code is retained for later use; enabling it requires
+reviewing the payment provider, credentials, prices, shipping and policies first.
+
+The EN/DE enquiry form POSTs to `/api/enquiry`. The Worker validates input,
+checks the request origin, rejects a honeypot and oversized bodies, and applies
+an IP-based rate limit (3 requests per minute per Cloudflare location). It awaits
+Cloudflare email sending before returning success. Failed requests preserve
+form values. This is an enquiry only, not a purchase or reservation.
+
+Email bindings and the recipient are server-side settings in `vite.config.ts`:
+`ENQUIRY_EMAIL` is restricted to the owner's verified destination, `ENQUIRY_TO`
+sets that destination, and `ENQUIRY_RATE_LIMITER` limits submissions. The sender
+is `support@coilo.de`; Reply-To is the validated visitor address. No API key or
+third-party email service is required. Before deployment, ensure Email Routing
+is active for coilo.de and the configured destination is verified in the same
+Cloudflare account. Deploy the rebuilt Worker to apply bindings.
+
+Local email sending is simulated by Cloudflare, so localhost submissions return
+503 instead of claiming a real email was sent. Test a real delivery after deploy;
+success means Cloudflare accepted the email, not a guarantee of inbox delivery.
+The destination address is never included in the client bundle or API responses.
+Server tests (without sending actual email):
+`npx tsx --test lib/enquiry-server.test.ts`.
+
+Payment badges and structured-data offers are hidden while checkout is disabled.
+Existing legal-page links still depend on Shopify; migrate those pages before
+closing the Shopify store.
+
 Product landing page for Coilo's modern 3D printed spiral bookshelf. The site
 runs on vinext/React and creates Shopify carts through the Storefront API before
 redirecting buyers to Shopify checkout.
