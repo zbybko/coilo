@@ -11,6 +11,9 @@ const { d1, r2 } = hostingConfig;
 const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
+  vars: { ENQUIRY_TO: "zakhar.bybko@icloud.com" },
+  send_email: [{ name: "ENQUIRY_EMAIL", destination_address: "zakhar.bybko@icloud.com" }],
+  ratelimits: [{ name: "ENQUIRY_RATE_LIMITER", namespace_id: "1001", simple: { limit: 3, period: 60 as const } }],
   routes: [
     { pattern: "coilo.de", custom_domain: true },
     { pattern: "www.coilo.de", custom_domain: true },
