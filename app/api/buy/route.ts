@@ -1,3 +1,4 @@
+import { CHECKOUT_ENABLED, PRODUCT_COLORS, enquiryUrl } from "../../../lib/sales";
 import {
   createCheckoutUrl,
   findVariantForColor,
@@ -6,6 +7,11 @@ import {
 } from "../../../lib/shopify";
 
 export async function GET(request: Request) {
+  if (!CHECKOUT_ENABLED) {
+    const url = new URL(request.url);
+    const color = PRODUCT_COLORS.find((item) => item.slug === url.searchParams.get("color"));
+    return Response.redirect(new URL(enquiryUrl(color?.variantId ?? ""), url.origin), 303);
+  }
   if (!isShopifyConfigured()) {
     return Response.json(
       {

@@ -9,6 +9,7 @@
 // DE labels link to /de/policies/…, EN to /policies/….
 
 import { useI18n } from "../../lib/i18n";
+import { CHECKOUT_ENABLED } from "../../lib/sales";
 
 const ETSY_URL = "https://www.etsy.com/shop/Coilo";
 const TIKTOK_URL = "https://www.tiktok.com/@coilo.home";
@@ -92,11 +93,11 @@ export default function SiteFooter({ theme = "dark" }: { theme?: "light" | "dark
 
       <div className="sf__bottom">
         <span>© 2026 Coilo · {t.footer.rights}</span>
-        <div className="sf__pay" aria-label="Payment methods">
+        {CHECKOUT_ENABLED && <div className="sf__pay" aria-label="Payment methods">
           {PAYMENTS.map((p) => (
             <span key={p} className="sf__pay-badge">{p}</span>
           ))}
-        </div>
+        </div>}
       </div>
     </footer>
   );

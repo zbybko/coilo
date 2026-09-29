@@ -12,6 +12,8 @@
 // Allowlisted inbound params. Never forward anything outside this list.
 // gbraid / wbraid / gad_source are Google Ads companions to gclid (PMax
 // consent-mode fallbacks) — keep them or Google optimizes blind.
+import { CHECKOUT_ENABLED, enquiryUrl } from "./sales";
+
 const ALLOWED_PARAMS = [
   "utm_source",
   "utm_medium",
@@ -117,6 +119,7 @@ export type BuyCta = "hero" | "configurator" | "footer";
 
 /** Plain cart permalink — used as the no-JS href on Buy links. */
 export function cartUrl(variantId: string): string {
+  if (!CHECKOUT_ENABLED) return enquiryUrl(variantId);
   return `${SHOP_ORIGIN}/cart/${variantId}:1`;
 }
 
@@ -126,6 +129,7 @@ export function cartUrl(variantId: string): string {
  * `variant=` so it lands in the order's `landing_site` and stays queryable.
  */
 export function buyUrl(variantId: string, color: string, cta: BuyCta): string {
+  if (!CHECKOUT_ENABLED) return enquiryUrl(variantId);
   const url = new URL(cartUrl(variantId));
   if (typeof window === "undefined") return url.toString();
 

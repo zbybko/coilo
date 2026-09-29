@@ -1,5 +1,6 @@
 import ColorsClient from "./ColorsClient";
 import { resolveMarket } from "../../lib/market";
+import { CHECKOUT_ENABLED } from "../../lib/sales";
 
 // Product structured data so Google can match this landing page against the
 // Merchant Center feeds. `?market=` (used by the non-EUR feed links) switches
@@ -31,7 +32,7 @@ function productJsonLd(marketParam?: string) {
       color: v.color,
       image: `https://coilo.de/media/site-assets/colors/${v.img}`,
       url: `https://coilo.de/colors?${marketQs}color=${v.slug}`,
-      offers: {
+      offers: CHECKOUT_ENABLED ? {
         "@type": "Offer",
         price: market.amount.toFixed(2),
         priceCurrency: market.currency,
@@ -39,7 +40,7 @@ function productJsonLd(marketParam?: string) {
         itemCondition: "https://schema.org/NewCondition",
         url: `https://coilo.de/colors?${marketQs}color=${v.slug}`,
         seller: { "@type": "Organization", name: "Coilo" },
-      },
+      } : undefined,
     })),
   };
 }

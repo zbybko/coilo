@@ -12,6 +12,7 @@ import {
   useState,
   ReactNode,
 } from "react";
+import { CHECKOUT_ENABLED } from "./sales";
 
 const EN = {
   nav: {
@@ -43,7 +44,7 @@ const EN = {
   config: {
     eyebrow: "Color Configurator",
     title: "Find your color.",
-    buy: "Buy Now",
+    buy: CHECKOUT_ENABLED ? "Buy Now" : "Register interest",
     soldOut: "Sold out",
     support: "Questions?",
   },
@@ -103,7 +104,7 @@ const EN = {
     title2: "to your shelf.",
     text: "Order the Modern Spiral Bookshelf and choose the finish that fits your space.",
     pick: "Pick a Color",
-    shop: "Shop Now",
+    shop: CHECKOUT_ENABLED ? "Shop Now" : "Register interest",
     trust: "Trusted by buyers on Etsy · ★★★★★",
     home: "Home",
     legal: "Legal",
@@ -208,7 +209,7 @@ const DE: typeof EN = {
   config: {
     eyebrow: "Farb-Konfigurator",
     title: "Finde deine Farbe.",
-    buy: "Jetzt kaufen",
+    buy: CHECKOUT_ENABLED ? "Jetzt kaufen" : "Interesse anmelden",
     soldOut: "Ausverkauft",
     support: "Fragen?",
   },
@@ -268,7 +269,7 @@ const DE: typeof EN = {
     title2: "in dein Regal.",
     text: "Bestelle das moderne Spiral-Bücherregal und wähle die Farbe, die zu deinem Raum passt.",
     pick: "Farbe wählen",
-    shop: "Jetzt shoppen",
+    shop: CHECKOUT_ENABLED ? "Jetzt shoppen" : "Interesse anmelden",
     trust: "Von Etsy-Käufern geschätzt · ★★★★★",
     home: "Start",
     legal: "Rechtliches",
